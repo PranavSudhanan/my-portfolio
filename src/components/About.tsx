@@ -5,6 +5,7 @@ import { Reveal, Stagger, staggerItem } from "./Reveal";
 import { motion } from "framer-motion";
 import { FiServer, FiLayout, FiCloud, FiCpu } from "react-icons/fi";
 import { profile, education, certifications, spokenLanguages } from "@/lib/data";
+import Image from 'next/image'
 
 const whatIDo = [
   {
@@ -40,13 +41,19 @@ export function About() {
           <Reveal>
             <div className="glow-border card-hover glass rounded-2xl p-6">
               <div className="relative mx-auto mb-6 h-40 w-40">
-                <div className="absolute inset-0 animate-floaty rounded-full bg-gradient-to-br from-[var(--color-violet)] to-[var(--color-cyan)] blur-xl opacity-60" />
-                <div className="relative grid h-40 w-40 place-items-center rounded-full border border-white/10 bg-gradient-to-br from-[#141830] to-[#0b0e1a]">
-                  {/* Replace this monogram with a photo: drop /public/profile.jpg
-                      and swap this block for a next/image. */}
-                  <span className="font-display text-5xl font-bold gradient-text">
-                    PSL
-                  </span>
+                {/* Glow */}
+                <div className="absolute inset-0 animate-floaty rounded-full bg-gradient-to-br from-[var(--color-violet)] to-[var(--color-cyan)] opacity-60 blur-xl" />
+
+                {/* Circular image container */}
+                <div className="relative h-40 w-40 overflow-hidden rounded-full border border-white/10">
+                  <Image
+                    src={profile.profileImage}
+                    alt={profile.name}
+                    fill
+                    sizes="160px"
+                    className="object-cover"
+                    priority
+                  />
                 </div>
               </div>
 

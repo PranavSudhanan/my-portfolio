@@ -5,6 +5,7 @@
 export const profile = {
   name: "Pranav S L",
   firstName: "Pranav",
+  initials: "PSL",
   role: "Full Stack Software Developer",
   roles: [
     "Full Stack Developer",
@@ -16,8 +17,9 @@ export const profile = {
   email: "pranavsudhanan98@gmail.com",
   phone: "+91 97444 33671",
   linkedin: "https://www.linkedin.com/in/pranav-s-l-26782b255",
-  github: "https://github.com/", // ← add your GitHub username
+  github: "https://github.com/PranavSudhanan", // ← add your GitHub username
   resume: "/Pranav_S_L_Resume.pdf",
+  profileImage: "/pranav-profile.jpg", // ← add your profile image to /public
   summary:
     "Full Stack Software Developer with 4+ years of experience designing, building, and delivering scalable web applications and enterprise BI platforms with Python, Django, FastAPI, React and Next.js. I own features end-to-end — backend, frontend and cloud — and turn complex business data into dashboards, automated reports and conversational tools people actually use.",
   tagline:
