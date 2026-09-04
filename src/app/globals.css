@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+/* ───────────────────────────  Design tokens  ─────────────────────────── */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
+
+  --color-bg: #06070e;
+  --color-bg-soft: #0a0c16;
+  --color-surface: #0e1120;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-fg: #eef0f8;
+  --color-muted: #a2a9bd;
+  --color-faint: #737b91;
+
+  --color-violet: #8b7cff;
+  --color-cyan: #34d5f0;
+  --color-emerald: #3ddc97;
+  --color-amber: #ffb454;
+
+  --shadow-glow: 0 0 60px -15px rgba(139, 124, 255, 0.5);
+}
+
+:root {
+  --grad: linear-gradient(120deg, #8b7cff 0%, #6ea8ff 45%, #34d5f0 100%);
+  --grad-warm: linear-gradient(120deg, #a78bff 0%, #ff8fb0 100%);
+  --faint: #737b91;
+  color-scheme: dark;
+}
+
+/* ───────────────────────────  Base  ─────────────────────────── */
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Ambient page background: layered radial auroras + dotted grid */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(600px circle at 12% 8%, rgba(139, 124, 255, 0.16), transparent 45%),
+    radial-gradient(700px circle at 88% 20%, rgba(52, 213, 240, 0.12), transparent 45%),
+    radial-gradient(700px circle at 60% 100%, rgba(61, 220, 151, 0.08), transparent 45%);
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 100% 60% at 50% 0%, #000 40%, transparent 100%);
+  pointer-events: none;
+}
+
+::selection {
+  background: rgba(139, 124, 255, 0.35);
+  color: #fff;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #232842;
+  border-radius: 99px;
+  border: 2px solid var(--color-bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #333a5c;
+}
+
+/* ───────────────────────────  Utilities  ─────────────────────────── */
+.gradient-text {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-text-warm {
+  background: var(--grad-warm);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--color-line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.card-hover {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+
+/* Gradient hairline border on hover for cards */
+.glow-border {
+  position: relative;
+}
+.glow-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--grad);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.glow-border:hover::before {
+  opacity: 1;
+}
+
+.section-pad {
+  padding-block: clamp(5rem, 12vw, 9rem);
+}
+
+.container-px {
+  padding-inline: clamp(1.25rem, 5vw, 2.5rem);
+}
+
+/* Animated aurora blobs used in the hero */
+.aurora {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(30px, -40px, 0) scale(1.08); }
+  66% { transform: translate3d(-25px, 25px, 0) scale(0.95); }
+}
+@keyframes floaty-2 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-40px, -30px, 0) scale(1.12); }
+}
+
+.animate-floaty { animation: floaty 16s ease-in-out infinite; }
+.animate-floaty-2 { animation: floaty-2 20s ease-in-out infinite; }
+
+/* Marquee for skills row */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* Blinking caret for the rotating role */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.caret { animation: blink 1.05s step-end infinite; }
+
+/* Grid glow line for timeline */
+.timeline-line {
+  background: linear-gradient(180deg, transparent, var(--color-violet) 12%, var(--color-cyan) 88%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-floaty, .animate-floaty-2, .animate-marquee, .caret { animation: none !important; }
+  * { transition-duration: 0.001ms !important; }
+}
