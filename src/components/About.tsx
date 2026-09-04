@@ -33,7 +33,7 @@ const whatIDo = [
 export function About() {
   return (
     <section id="about" className="section-pad">
-      <div className="container-px mx-auto max-w-6xl">
+      <div className="shell">
         <SectionHeading index="01" subtitle="Who I am" title="About me" />
 
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">

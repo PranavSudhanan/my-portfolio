@@ -35,7 +35,7 @@ const channels = [
 export function Contact() {
   return (
     <section id="contact" className="section-pad">
-      <div className="container-px mx-auto max-w-5xl">
+      <div className="shell">
         <Reveal>
           <div className="glow-border glass relative overflow-hidden rounded-3xl p-8 text-center sm:p-14">
             <div
@@ -79,7 +79,7 @@ export function Contact() {
               </a>
             </div>
 
-            <div className="mt-10 grid gap-3 border-t border-white/10 pt-8 sm:grid-cols-2">
+            <div className="mx-auto mt-10 grid max-w-5xl gap-3 border-t border-white/10 pt-8 sm:grid-cols-2 lg:max-w-none lg:grid-cols-4">
               {channels.map((c) => {
                 const content = (
                   <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 text-left transition-colors hover:border-white/20 hover:bg-white/[0.05]">

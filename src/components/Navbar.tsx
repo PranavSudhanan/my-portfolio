@@ -54,7 +54,7 @@ export function Navbar() {
         }`}
       >
         <nav
-          className={`container-px mx-auto flex max-w-6xl items-center justify-between rounded-2xl transition-all duration-300 ${
+          className={`container-px mx-auto flex max-w-[1840px] items-center justify-between rounded-2xl transition-all duration-300 min-[2200px]:max-w-[2000px] ${
             scrolled
               ? "glass mx-4 px-4 py-2.5 shadow-lg shadow-black/30 sm:mx-auto"
               : "px-2"

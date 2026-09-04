@@ -80,7 +80,7 @@ const marquee = [
 export function Skills() {
   return (
     <section id="skills" className="section-pad">
-      <div className="container-px mx-auto max-w-6xl">
+      <div className="shell">
         <SectionHeading
           index="03"
           subtitle="What I work with"

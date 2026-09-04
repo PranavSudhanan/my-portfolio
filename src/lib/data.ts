@@ -110,6 +110,7 @@ export const projects: Project[] = [
       "Connected to Azure Databricks for real-time sales, stock & operational data",
     ],
     stack: ["Python", "FastAPI", "Claude", "GPT-5", "Databricks"],
+    link: "https://ai-lia-hsckcxb0djbzbmeu.centralindia-01.azurewebsites.net/",
     featured: true,
     accent: "violet",
   },
@@ -125,6 +126,7 @@ export const projects: Project[] = [
       "Multi-tenant Azure deployment with Azure DevOps CI/CD",
     ],
     stack: ["React", "FastAPI", "MSSQL", "Databricks", "Azure"],
+    link: "https://aspire.alkemsfa360.com/",
     featured: true,
     accent: "cyan",
   },
@@ -152,6 +154,7 @@ export const projects: Project[] = [
       "Interfaces for viewing database tables and inspecting records",
     ],
     stack: ["Python", "FastAPI", "SQL"],
+    link: "https://mdm.leapsurgebi.com/",
     accent: "amber",
   },
   {

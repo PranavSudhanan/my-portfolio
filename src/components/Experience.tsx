@@ -7,7 +7,7 @@ import { experiences } from "@/lib/data";
 export function Experience() {
   return (
     <section id="experience" className="section-pad relative">
-      <div className="container-px mx-auto max-w-6xl">
+      <div className="shell">
         <SectionHeading
           index="02"
           subtitle="Where I've worked"

@@ -59,7 +59,7 @@ export function Hero() {
         <div className="aurora animate-floaty left-[35%] bottom-[-10%] h-[30vw] w-[30vw] max-h-[420px] max-w-[420px] bg-[var(--color-emerald)]/20" />
       </div>
 
-      <div className="container-px mx-auto grid w-full max-w-6xl items-center gap-14 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="shell grid w-full items-center gap-14 2xl:gap-20 lg:grid-cols-[1.15fr_0.85fr]">
         <motion.div variants={container} initial="hidden" animate="show">
           <motion.div variants={item}>
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-1.5 text-sm text-[var(--color-muted)]">
@@ -80,7 +80,7 @@ export function Hero() {
 
           <motion.h1
             variants={item}
-            className="mt-2 font-display text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
+            className="mt-2 font-display text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl 2xl:text-8xl"
           >
             {profile.name.split(" ").slice(0, 1).join(" ")}{" "}
             <span className="gradient-text">
@@ -99,7 +99,7 @@ export function Hero() {
 
           <motion.p
             variants={item}
-            className="mt-6 max-w-xl text-base leading-relaxed text-[var(--color-muted)] sm:text-lg"
+            className="mt-6 max-w-xl text-base leading-relaxed text-[var(--color-muted)] sm:text-lg 2xl:max-w-2xl 2xl:text-xl"
           >
             {profile.tagline} I turn complex business data into dashboards,
             automated reports and conversational tools people actually use.
@@ -140,7 +140,7 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.94, y: 24 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="relative mx-auto w-full max-w-md"
+          className="relative mx-auto w-full max-w-md 2xl:max-w-lg"
         >
           <div className="glow-border card-hover glass relative overflow-hidden rounded-2xl">
             <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
@@ -199,7 +199,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.7 }}
-        className="container-px absolute inset-x-0 bottom-6 mx-auto hidden max-w-6xl lg:block"
+        className="shell absolute inset-x-0 bottom-6 hidden lg:block"
       >
         <div className="glass grid grid-cols-4 divide-x divide-white/10 rounded-2xl">
           {stats.map((s) => (

@@ -6,7 +6,7 @@ export function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="border-t border-white/10">
-      <div className="container-px mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 py-8 sm:flex-row">
+      <div className="shell flex flex-col items-center justify-between gap-4 py-8 sm:flex-row">
         <div className="flex items-center gap-2.5">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[var(--color-violet)] to-[var(--color-cyan)] font-mono text-xs text-black">
             PS

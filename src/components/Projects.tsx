@@ -26,7 +26,7 @@ export function Projects() {
 
   return (
     <section id="projects" className="section-pad">
-      <div className="container-px mx-auto max-w-6xl">
+      <div className="shell">
         <SectionHeading
           index="04"
           subtitle="What I've built"
