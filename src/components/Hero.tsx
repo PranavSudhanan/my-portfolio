@@ -50,7 +50,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative flex min-h-[100svh] items-center overflow-hidden pt-28 pb-16"
+      className="relative flex min-h-[100svh] flex-col overflow-hidden pt-28 pb-10"
     >
       {/* Aurora blobs */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
@@ -59,7 +59,8 @@ export function Hero() {
         <div className="aurora animate-floaty left-[35%] bottom-[-10%] h-[30vw] w-[30vw] max-h-[420px] max-w-[420px] bg-[var(--color-emerald)]/20" />
       </div>
 
-      <div className="shell grid w-full items-center gap-14 2xl:gap-20 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="flex w-full flex-1 items-center">
+        <div className="shell grid w-full items-center gap-14 2xl:gap-20 lg:grid-cols-[1.15fr_0.85fr]">
         <motion.div variants={container} initial="hidden" animate="show">
           <motion.div variants={item}>
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-1.5 text-sm text-[var(--color-muted)]">
@@ -192,6 +193,7 @@ export function Hero() {
             <p className="text-xs text-[var(--color-muted)]">years building</p>
           </div>
         </motion.div>
+        </div>
       </div>
 
       {/* stats strip */}
@@ -199,7 +201,7 @@ export function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.7 }}
-        className="shell absolute inset-x-0 bottom-6 hidden lg:block"
+        className="shell mt-8 hidden lg:block"
       >
         <div className="glass grid grid-cols-4 divide-x divide-white/10 rounded-2xl">
           {stats.map((s) => (
