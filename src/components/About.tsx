@@ -102,7 +102,7 @@ export function About() {
 
           {/* Right: bio + what I do */}
           <div>
-            <Reveal>
+            <Reveal className="max-w-4xl">
               <p className="text-lg leading-relaxed text-[var(--color-fg)]/90">
                 {profile.summary}
               </p>
