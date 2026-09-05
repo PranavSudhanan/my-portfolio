@@ -257,11 +257,11 @@ function Globe() {
         ctx.beginPath();
         ctx.arc(p.sx, p.sy, rad, 0, Math.PI * 2);
         if (p.amber) {
-          ctx.fillStyle = `rgba(240, 166, 58, ${Math.min(1, alpha + 0.1)})`;
-          ctx.shadowColor = "rgba(240,166,58,0.8)";
+          ctx.fillStyle = `rgba(182, 173, 160, ${Math.min(1, alpha + 0.1)})`;
+          ctx.shadowColor = "rgba(182, 173, 160, 0.7)";
           ctx.shadowBlur = 6 * dpr * t;
         } else {
-          ctx.fillStyle = `rgba(${Math.round(150 + 70 * t)}, ${Math.round(120 + 55 * t)}, 255, ${alpha})`;
+          ctx.fillStyle = `rgba(${Math.round(150 + 78 * t)}, ${Math.round(148 + 78 * t)}, ${Math.round(170 + 62 * t)}, ${alpha})`;
           ctx.shadowBlur = 0;
         }
         ctx.fill();
@@ -1090,9 +1090,9 @@ function CodeBars({ where }: { where: "tl" | "bl" | "tr" | "br" }) {
     br: { bottom: 24, right: 24, alignItems: "flex-end" },
   };
   const rows = [
-    [["#b833ff", 34], ["#3a3a44", 20]],
-    [["#f0a63a", 18], ["#4bd1c8", 40], ["#3a3a44", 14]],
-    [["#4a7bff", 26], ["#3a3a44", 22]],
+    [["#9b93c9", 34], ["#3a3a44", 20]],
+    [["#57575f", 18], ["#6b6494", 40], ["#3a3a44", 14]],
+    [["#48484f", 26], ["#3a3a44", 22]],
   ] as const;
   return (
     <div className={styles.bars} style={pos[where]}>
