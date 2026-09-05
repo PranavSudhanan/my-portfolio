@@ -63,22 +63,30 @@
 
 .section {
   position: relative;
-  min-height: 100dvh;
-  scroll-snap-align: start;
+  height: 100dvh;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 6rem clamp(1.25rem, 5vw, 5rem) 5rem;
   overflow: hidden;
 }
-.engineMode .section {
-  height: 100dvh;
-}
+/* content wrapper: centered when it fits, scrolls internally when it doesn't
+   (so a section always occupies one viewport for the slide engine, yet nothing
+   is ever clipped on short/mobile screens). */
 .inner {
   position: relative;
   z-index: 3;
-  margin-inline: auto;
   width: 100%;
   max-width: 1200px;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.inner::-webkit-scrollbar {
+  display: none;
 }
 
 /* ---------- Typography ---------- */
@@ -576,31 +584,17 @@
 
 .heroArt { position: relative; }
 
-/* Tablet / touch / narrow: native scroll instead of the desktop slide engine.
-   The JS engine gates itself with the same media query, so behaviour matches. */
-@media (max-width: 1023px), (pointer: coarse) {
-  .viewport {
-    overflow-y: auto;
-    overflow-x: hidden;
-    scroll-snap-type: y proximity;
-    scrollbar-width: none;
-  }
-  .viewport::-webkit-scrollbar { display: none; }
-  .engineMode { transform: none !important; }
-  .section {
-    height: auto;
-    min-height: 100dvh;
-    scroll-snap-align: start;
-  }
-  .side, .scrollCue { display: none; }
-}
-
 @media (max-width: 900px) {
   .heroArt { display: none; } /* drop the code-window art; hero becomes text-only */
-  .section { padding-top: 6.5rem; padding-bottom: 4rem; }
+  .section { padding-top: 5.5rem; padding-bottom: 3.5rem; }
 }
 @media (max-width: 640px) {
-  .h1 { font-size: clamp(2.4rem, 12vw, 3.2rem); }
+  .h1 { font-size: clamp(2.3rem, 11vw, 3.1rem); }
+  .h2 { font-size: clamp(1.7rem, 7.5vw, 2.4rem); }
+  .globeWrap { width: min(64vw, 240px); }
+  .side { right: 0.4rem; gap: 0.7rem; }
+  .scrollCue { display: none; }
+  .section { padding-right: 2.6rem; } /* clear the side-nav */
 }
 
 @media (prefers-reduced-motion: reduce) {

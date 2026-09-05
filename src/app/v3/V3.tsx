@@ -504,9 +504,12 @@ export default function V3() {
     window.setTimeout(() => (lockRef.current = false), 950);
   }, []);
 
-  const engineOn = () =>
-    typeof window !== "undefined" &&
-    window.matchMedia("(min-width: 1024px) and (pointer: fine)").matches;
+  // the internal scroller of a section (content scrolls when taller than viewport)
+  const scrollerFor = useCallback((i: number) => {
+    const secs = containerRef.current?.querySelectorAll<HTMLElement>("section");
+    const sec = secs && secs[i];
+    return sec ? sec.querySelector<HTMLElement>("." + styles.inner) : null;
+  }, []);
 
   const navigate = useCallback(
     (dir: number) => {
@@ -537,42 +540,69 @@ export default function V3() {
   const goTo = useCallback(
     (i: number) => {
       const clamped = Math.max(0, Math.min(N - 1, i));
-      if (engineOn()) {
-        if (clamped !== activeRef.current) {
-          setActive(clamped);
-          lock();
-        }
-      } else {
-        containerRef.current
-          ?.querySelectorAll<HTMLElement>("section")
-          ?.[clamped]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (clamped !== activeRef.current) {
+        setActive(clamped);
+        lock();
       }
     },
     [lock]
   );
 
+  // when the section changes, start it scrolled to the top
+  useEffect(() => {
+    const sc = scrollerFor(active);
+    if (sc) sc.scrollTop = 0;
+  }, [active, scrollerFor]);
+
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    const extremes = () => {
+      const sc = scrollerFor(activeRef.current);
+      if (!sc) return { top: true, bottom: true };
+      return {
+        top: sc.scrollTop <= 1,
+        bottom: sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1,
+      };
+    };
+
     const onWheel = (e: WheelEvent) => {
-      if (!engineOn()) return;
+      const dir = e.deltaY > 0 ? 1 : -1;
+      const { top, bottom } = extremes();
+      // let the section scroll internally until an edge is reached
+      if ((dir > 0 && !bottom) || (dir < 0 && !top)) return;
       e.preventDefault();
       if (Math.abs(e.deltaY) < 6) return;
-      navigate(e.deltaY > 0 ? 1 : -1);
+      navigate(dir);
     };
-    let touchY = 0;
-    const onTouchStart = (e: TouchEvent) => (touchY = e.touches[0].clientY);
+
+    let ty = 0;
+    let tx = 0;
+    let startTop = true;
+    let startBottom = true;
+    const onTouchStart = (e: TouchEvent) => {
+      ty = e.touches[0].clientY;
+      tx = e.touches[0].clientX;
+      const ex = extremes();
+      startTop = ex.top;
+      startBottom = ex.bottom;
+    };
     const onTouchMove = (e: TouchEvent) => {
-      if (!engineOn()) return;
-      if (Math.abs(e.touches[0].clientY - touchY) > 8) e.preventDefault();
+      const dy = e.touches[0].clientY - ty;
+      const dx = e.touches[0].clientX - tx;
+      if (Math.abs(dx) > Math.abs(dy)) return; // horizontal → let the slider handle it
+      // block native overscroll only when a section change is intended
+      if ((dy < 0 && startBottom) || (dy > 0 && startTop)) e.preventDefault();
     };
     const onTouchEnd = (e: TouchEvent) => {
-      if (!engineOn()) return;
-      const dy = e.changedTouches[0].clientY - touchY;
-      if (Math.abs(dy) > 50) navigate(dy < 0 ? 1 : -1);
+      const dy = e.changedTouches[0].clientY - ty;
+      const dx = e.changedTouches[0].clientX - tx;
+      if (Math.abs(dy) < 55 || Math.abs(dx) > Math.abs(dy)) return;
+      if (dy < 0 && startBottom) navigate(1);
+      else if (dy > 0 && startTop) navigate(-1);
     };
+
     const onKey = (e: KeyboardEvent) => {
-      if (!engineOn()) return;
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       if (["ArrowDown", "PageDown", " "].includes(e.key)) {
@@ -584,6 +614,7 @@ export default function V3() {
       } else if (e.key === "Home") goTo(0);
       else if (e.key === "End") goTo(N - 1);
     };
+
     el.addEventListener("wheel", onWheel, { passive: false });
     el.addEventListener("touchstart", onTouchStart, { passive: true });
     el.addEventListener("touchmove", onTouchMove, { passive: false });
@@ -596,7 +627,7 @@ export default function V3() {
       el.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("keydown", onKey);
     };
-  }, [navigate, goTo]);
+  }, [navigate, goTo, scrollerFor]);
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
     const px = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -839,6 +870,7 @@ function Portfolio({
   setSlide: (n: number) => void;
 }) {
   const touchX = useRef(0);
+  const touchY = useRef(0);
   const next = () => setSlide(Math.min(slide + 1, LAST_SLIDE));
   const prev = () => setSlide(Math.max(slide - 1, 0));
 
@@ -874,11 +906,16 @@ function Portfolio({
         <Rise show={show} from="up" delay={0.15}>
           <div
             className={styles.pfViewport}
-            onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
+            onTouchStart={(e) => {
+              touchX.current = e.touches[0].clientX;
+              touchY.current = e.touches[0].clientY;
+            }}
             onTouchEnd={(e) => {
               const dx = e.changedTouches[0].clientX - touchX.current;
-              if (dx < -50) next();
-              else if (dx > 50) prev();
+              const dy = e.changedTouches[0].clientY - touchY.current;
+              if (Math.abs(dx) < 45 || Math.abs(dy) > Math.abs(dx)) return;
+              if (dx < 0) next();
+              else prev();
             }}
           >
             <motion.div
