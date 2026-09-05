@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import {
   FiChevronDown,
   FiChevronUp,
@@ -288,6 +288,43 @@ function Globe() {
       <canvas ref={canvasRef} className={styles.globeCanvas} />
       <div className={styles.globeRing} />
     </div>
+  );
+}
+
+/* Magnetic wrapper — pulls toward the cursor (desktop) + tap-scale (both) */
+function Magnetic({
+  children,
+  className,
+  strength = 0.4,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  strength?: number;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const x = useSpring(mx, { stiffness: 260, damping: 18, mass: 0.4 });
+  const y = useSpring(my, { stiffness: 260, damping: 18, mass: 0.4 });
+  return (
+    <motion.span
+      ref={ref}
+      className={className}
+      style={{ x, y, display: "inline-flex" }}
+      onMouseMove={(e) => {
+        const r = ref.current?.getBoundingClientRect();
+        if (!r) return;
+        mx.set((e.clientX - (r.left + r.width / 2)) * strength);
+        my.set((e.clientY - (r.top + r.height / 2)) * strength);
+      }}
+      onMouseLeave={() => {
+        mx.set(0);
+        my.set(0);
+      }}
+      whileTap={{ scale: 0.92 }}
+    >
+      {children}
+    </motion.span>
   );
 }
 
@@ -636,19 +673,24 @@ export default function V3() {
     if (el) {
       el.style.setProperty("--px", px.toFixed(3));
       el.style.setProperty("--py", py.toFixed(3));
+      el.style.setProperty("--cx", String(Math.round(e.clientX)));
+      el.style.setProperty("--cy", String(Math.round(e.clientY)));
     }
   }, []);
 
   return (
     <div className={styles.root} ref={rootRef} onMouseMove={onMouseMove}>
+      <div className={styles.cursorGlow} aria-hidden />
       <div className={styles.topbar}>
         <button className={styles.brand} onClick={() => goTo(0)} aria-label="Home">
           <span className={styles.brandMark}>{"</>"}</span>
           PRANAV
         </button>
-        <button className={styles.contactBtn} onClick={() => goTo(4)}>
-          Contact
-        </button>
+        <Magnetic>
+          <button className={styles.contactBtn} onClick={() => goTo(4)}>
+            Contact
+          </button>
+        </Magnetic>
       </div>
 
       <div className={styles.side}>
@@ -816,6 +858,7 @@ function About({ show }: { show: boolean }) {
 
 /* ───────────────── Skills ───────────────── */
 function Skills({ show }: { show: boolean }) {
+  const [activeSkill, setActiveSkill] = useState<string | null>(null);
   return (
     <section className={styles.section}>
       <CodeBars where="bl" />
@@ -846,10 +889,15 @@ function Skills({ show }: { show: boolean }) {
           <Rise show={show} from="up" delay={0.26}>
             <div className="mx-auto mt-12 grid max-w-4xl grid-cols-3 gap-x-6 gap-y-9 sm:grid-cols-5 lg:grid-cols-7">
               {skills.map((s) => (
-                <div key={s.name} className={styles.skillItem}>
+                <button
+                  key={s.name}
+                  type="button"
+                  onClick={() => setActiveSkill((p) => (p === s.name ? null : s.name))}
+                  className={`${styles.skillItem} ${activeSkill === s.name ? styles.skillActive : ""}`}
+                >
                   <s.Icon size={34} />
                   <span>{s.name}</span>
-                </div>
+                </button>
               ))}
             </div>
           </Rise>
@@ -893,12 +941,16 @@ function Portfolio({
               </h2>
             </div>
             <div className="hidden items-center gap-3 sm:flex">
-              <button className={styles.arrowBtn} onClick={prev} disabled={slide === 0} aria-label="Previous">
-                <FiArrowLeft />
-              </button>
-              <button className={styles.arrowBtn} onClick={next} disabled={slide === LAST_SLIDE} aria-label="Next">
-                <FiArrowRight />
-              </button>
+              <Magnetic strength={0.5}>
+                <button className={styles.arrowBtn} onClick={prev} disabled={slide === 0} aria-label="Previous">
+                  <FiArrowLeft />
+                </button>
+              </Magnetic>
+              <Magnetic strength={0.5}>
+                <button className={styles.arrowBtn} onClick={next} disabled={slide === LAST_SLIDE} aria-label="Next">
+                  <FiArrowRight />
+                </button>
+              </Magnetic>
             </div>
           </div>
         </Rise>
@@ -999,24 +1051,28 @@ function Contact({ show }: { show: boolean }) {
               {profile.email}
             </a>
             <div className="mt-8 flex items-center gap-4">
-              <a
-                href={profile.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="grid h-11 w-11 place-items-center rounded-lg border border-[var(--line)] text-[var(--muted)] transition-colors hover:border-[var(--purple)] hover:text-[var(--fg)]"
-              >
-                <FaLinkedinIn />
-              </a>
-              <a
-                href={profile.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub"
-                className="grid h-11 w-11 place-items-center rounded-lg border border-[var(--line)] text-[var(--muted)] transition-colors hover:border-[var(--purple)] hover:text-[var(--fg)]"
-              >
-                <FaGithub />
-              </a>
+              <Magnetic strength={0.5}>
+                <a
+                  href={profile.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  className="grid h-11 w-11 place-items-center rounded-lg border border-[var(--line)] text-[var(--muted)] transition-colors hover:border-[var(--purple)] hover:text-[var(--fg)]"
+                >
+                  <FaLinkedinIn />
+                </a>
+              </Magnetic>
+              <Magnetic strength={0.5}>
+                <a
+                  href={profile.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                  className="grid h-11 w-11 place-items-center rounded-lg border border-[var(--line)] text-[var(--muted)] transition-colors hover:border-[var(--purple)] hover:text-[var(--fg)]"
+                >
+                  <FaGithub />
+                </a>
+              </Magnetic>
             </div>
           </Rise>
         </div>
