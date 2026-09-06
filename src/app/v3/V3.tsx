@@ -798,7 +798,7 @@ function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) {
                   <span className={styles.aAmber}>&apos;Next.js&apos;</span>],
                 </div>
                 <div style={{ paddingLeft: 18, color: "var(--muted)" }}>
-                  focus: <span className={styles.aAmber}>&apos;BI · AI · Web&apos;</span>,
+                  focus: <span className={styles.aAmber}>&apos;AI · Web . API&apos;</span>,
                 </div>
                 <div style={{ paddingLeft: 18, color: "var(--muted)" }}>
                   available: <span className={styles.aPurple}>true</span>,
@@ -831,7 +831,7 @@ function About({ show }: { show: boolean }) {
               <br />
               <span className={styles.aPurple}>Pranav</span>
             </h2>
-            <p className={`${styles.lead} mt-3`}>Full-Stack Developer · BI &amp; AI</p>
+            <p className={`${styles.lead} mt-3`}>Full-Stack Developer · API &amp; AI</p>
           </Rise>
 
           <Rise show={show} from="up" delay={0.15} className={styles.portraitWrap}>
@@ -1036,7 +1036,10 @@ function Contact({ show }: { show: boolean }) {
 
           <Rise show={show} from="right" delay={0.15}>
             <p className={styles.kicker}>Contact</p>
-            <h2 className={`${styles.h2} mt-4`}>
+            <h2
+              className={`${styles.h2} mt-4 max-w-xl`}
+              style={{ fontSize: "clamp(1.5rem, 2.9vw, 2.35rem)", lineHeight: 1.15 }}
+            >
               What would you do if a full-stack engineer was a click away?
             </h2>
             <p className={`${styles.lead} mt-5`}>
@@ -1047,7 +1050,7 @@ function Contact({ show }: { show: boolean }) {
               </a>
               .
             </p>
-            <a href={`mailto:${profile.email}`} className={`${styles.bigMail} mt-8 block text-2xl sm:text-3xl lg:text-4xl`}>
+            <a href={`mailto:${profile.email}`} className={`${styles.bigMail} mt-8 block text-lg sm:text-2xl lg:text-3xl`}>
               {profile.email}
             </a>
             <div className="mt-8 flex items-center gap-4">

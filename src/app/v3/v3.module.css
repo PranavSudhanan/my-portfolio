@@ -584,10 +584,16 @@
 }
 .bigMail {
   font-family: var(--font-poppins), sans-serif;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  word-break: break-word;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: color 0.3s;
+}
+@media (max-width: 380px) {
+  .bigMail { font-size: 1rem !important; }
 }
 .bigMail:hover { color: var(--purple); }
 
