@@ -77,7 +77,7 @@
   position: relative;
   z-index: 3;
   width: 100%;
-  max-width: 1200px;
+  max-width: min(1320px, 92vw);
   max-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -101,7 +101,7 @@
   font-weight: 800;
   line-height: 0.98;
   letter-spacing: -0.02em;
-  font-size: clamp(2.6rem, 6.4vw, 5.5rem);
+  font-size: clamp(2.6rem, 6.4vw, 6.5rem);
 }
 .h2 {
   font-family: var(--font-poppins), var(--font-inter), sans-serif;
@@ -298,7 +298,7 @@
   position: relative;
   z-index: 3;
   width: 100%;
-  max-width: 440px;
+  max-width: 520px;
   margin-inline: auto;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -627,6 +627,18 @@
 }
 
 .heroArt { position: relative; }
+
+/* large desktops: use the extra width instead of stranding content in a
+   narrow centered column with wide empty margins */
+@media (min-width: 1500px) {
+  .inner { max-width: 1440px; }
+  .lead { font-size: 1.12rem; }
+  .codeBody { font-size: 0.9rem; padding: 1.35rem 1.5rem; }
+}
+@media (min-width: 1800px) {
+  .inner { max-width: 1560px; }
+  .codeWin { max-width: 580px; }
+}
 
 @media (max-width: 900px) {
   .heroArt { display: none; } /* drop the code-window art; hero becomes text-only */

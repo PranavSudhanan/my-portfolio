@@ -47,7 +47,7 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
           </div>
 
           <Rise show={show} from="right" delay={0.2} className={`${styles.heroArt} relative`}>
-            <P depth={26} style={{ right: "-4%", top: "-8%" }}>
+            <P depth={26} style={{ right: "6%", top: "-26%" }}>
               <div className={styles.floatB}>
                 <Cube size={44} dark />
               </div>
