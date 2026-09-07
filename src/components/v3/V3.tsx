@@ -4,6 +4,8 @@ import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { SECTIONS, N } from "./constants";
 import { useFullpage } from "./useFullpage";
 import { Magnetic } from "./Magnetic";
+import { ThemeSwitch } from "./ThemeSwitch";
+import { useTheme } from "./useTheme";
 import { Home } from "./sections/Home";
 import { About } from "./sections/About";
 import { Skills } from "./sections/Skills";
@@ -16,9 +18,10 @@ import styles from "./v3.module.css";
 export default function V3() {
   const { active, slide, setSlide, goTo, navigate, rootRef, containerRef, onMouseMove } =
     useFullpage();
+  const { mode, resolved, setMode } = useTheme();
 
   return (
-    <div className={styles.root} ref={rootRef} onMouseMove={onMouseMove}>
+    <div className={styles.root} data-theme={resolved} ref={rootRef} onMouseMove={onMouseMove}>
       <div className={styles.cursorGlow} aria-hidden />
 
       <div className={styles.topbar}>
@@ -26,11 +29,14 @@ export default function V3() {
           <span className={styles.brandMark}>{"</>"}</span>
           PRANAV
         </button>
-        <Magnetic>
-          <button className={styles.contactBtn} onClick={() => goTo(4)}>
-            Contact
-          </button>
-        </Magnetic>
+        <div className={styles.topRight}>
+          <ThemeSwitch mode={mode} setMode={setMode} />
+          <Magnetic>
+            <button className={styles.contactBtn} onClick={() => goTo(4)}>
+              Contact
+            </button>
+          </Magnetic>
+        </div>
       </div>
 
       <div className={styles.side}>

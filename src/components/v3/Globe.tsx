@@ -82,6 +82,8 @@ export function Globe() {
         vel.x *= 0.9;
         rot.x += (0.35 - rot.x) * 0.012;
       }
+      const light =
+        canvas.closest("[data-theme]")?.getAttribute("data-theme") === "light";
       const W = canvas.width;
       const H = canvas.height;
       ctx.clearRect(0, 0, W, H);
@@ -104,14 +106,22 @@ export function Globe() {
 
       for (const p of proj) {
         const t = (p.z + 1) / 2; // 0 back .. 1 front
-        const rad = (0.5 + 1.8 * t) * dpr;
+        const rad = ((light ? 0.75 : 0.5) + (light ? 1.85 : 1.8) * t) * dpr;
         const alpha = 0.1 + 0.85 * t;
         ctx.beginPath();
         ctx.arc(p.sx, p.sy, rad, 0, Math.PI * 2);
         if (p.amber) {
-          ctx.fillStyle = `rgba(182, 173, 160, ${Math.min(1, alpha + 0.1)})`;
-          ctx.shadowColor = "rgba(182, 173, 160, 0.7)";
-          ctx.shadowBlur = 6 * dpr * t;
+          // clean gold accent — keep a high opacity floor so back-facing accent
+          // dots never render as muddy low-alpha smudges
+          const a = light ? Math.max(0.62, Math.min(1, 0.4 + 0.6 * t)) : Math.min(1, alpha + 0.1);
+          ctx.fillStyle = light ? `rgba(226, 152, 40, ${a})` : `rgba(182, 173, 160, ${a})`;
+          ctx.shadowColor = light ? "rgba(226, 152, 40, 0.4)" : "rgba(182, 173, 160, 0.7)";
+          ctx.shadowBlur = (light ? 3 : 6) * dpr * t;
+        } else if (light) {
+          // crisp, saturated violet dots read clearly on the light pearl globe;
+          // a raised opacity floor keeps the front (center) dots from washing out
+          ctx.fillStyle = `rgba(88, 56, 200, ${0.5 + 0.42 * t})`;
+          ctx.shadowBlur = 0;
         } else {
           ctx.fillStyle = `rgba(${Math.round(150 + 78 * t)}, ${Math.round(148 + 78 * t)}, ${Math.round(170 + 62 * t)}, ${alpha})`;
           ctx.shadowBlur = 0;
