@@ -19,6 +19,13 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
       <P depth={30} style={{ right: "30%", top: "18%" }}>
         <div className={`${styles.orb} ${styles.orbPurple} ${styles.floatB}`} style={{ width: 26, height: 26 }} />
       </P>
+      {/* dark cube floating above the code window's top-right corner — kept at
+         section level so it's never clipped by the .inner scroll container */}
+      <P depth={26} style={{ right: "9.5%", top: "25%" }}>
+        <div className={styles.floatA}>
+          <Cube size={44} dark />
+        </div>
+      </P>
 
       <div className={styles.inner}>
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
@@ -47,11 +54,6 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
           </div>
 
           <Rise show={show} from="right" delay={0.2} className={`${styles.heroArt} relative`}>
-            <P depth={26} style={{ right: "6%", top: "-26%" }}>
-              <div className={styles.floatB}>
-                <Cube size={44} dark />
-              </div>
-            </P>
             <div className={styles.codeWin}>
               <div className={styles.codeTop}>
                 <span className={styles.codeDot} style={{ background: "#ff5f57" }} />
