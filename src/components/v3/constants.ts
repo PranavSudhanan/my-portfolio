@@ -24,21 +24,22 @@ export const PORTFOLIO = 3;
 /** Shared cubic-bezier easing for entrance/slide motion. */
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-export const skills: { name: string; Icon: IconType }[] = [
-  { name: "Python", Icon: SiPython },
-  { name: "Django", Icon: SiDjango },
-  { name: "FastAPI", Icon: SiFastapi },
-  { name: "React", Icon: SiReact },
-  { name: "Next.js", Icon: SiNextdotjs },
-  { name: "TypeScript", Icon: SiTypescript },
-  { name: "JavaScript", Icon: SiJavascript },
-  { name: "PostgreSQL", Icon: SiPostgresql },
-  { name: "MongoDB", Icon: SiMongodb },
-  { name: "Redis", Icon: SiRedis },
-  { name: "Azure", Icon: VscAzure },
-  { name: "AWS", Icon: FaAws },
-  { name: "Databricks", Icon: SiDatabricks },
-  { name: "Git", Icon: SiGit },
+export type SkillGroup = "Backend" | "Frontend" | "Database" | "Cloud" | "Data" | "Tools";
+export const skills: { name: string; Icon: IconType; group: SkillGroup }[] = [
+  { name: "Python", Icon: SiPython, group: "Backend" },
+  { name: "Django", Icon: SiDjango, group: "Backend" },
+  { name: "FastAPI", Icon: SiFastapi, group: "Backend" },
+  { name: "React", Icon: SiReact, group: "Frontend" },
+  { name: "Next.js", Icon: SiNextdotjs, group: "Frontend" },
+  { name: "TypeScript", Icon: SiTypescript, group: "Frontend" },
+  { name: "JavaScript", Icon: SiJavascript, group: "Frontend" },
+  { name: "PostgreSQL", Icon: SiPostgresql, group: "Database" },
+  { name: "MongoDB", Icon: SiMongodb, group: "Database" },
+  { name: "Redis", Icon: SiRedis, group: "Database" },
+  { name: "Azure", Icon: VscAzure, group: "Cloud" },
+  { name: "AWS", Icon: FaAws, group: "Cloud" },
+  { name: "Databricks", Icon: SiDatabricks, group: "Data" },
+  { name: "Git", Icon: SiGit, group: "Tools" },
 ];
 
 /** Which mock preview UI each project renders inside its device frame. */

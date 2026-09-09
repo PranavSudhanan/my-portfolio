@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import type { MockKind } from "./constants";
+import { Tilt } from "./Tilt";
 import styles from "./v3.module.css";
 
 function DashboardMock({ label }: { label: string }) {
@@ -156,42 +156,48 @@ function AppCardMock({ variant }: { variant: "loyalty" | "travel" }) {
   );
 }
 
-/** A mouse-tilting browser/device frame that renders a project's mock UI. */
-export function DeviceCard({ kind, label }: { kind: MockKind; label: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const onMove = (e: React.MouseEvent) => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    el.style.transform = `rotateY(${px * 9}deg) rotateX(${-py * 9}deg)`;
-  };
-  const onLeave = () => {
-    if (ref.current) ref.current.style.transform = "";
-  };
-  return (
-    <div className={styles.deviceScene} onMouseMove={onMove} onMouseLeave={onLeave}>
-      <div ref={ref} className={styles.device}>
-        <div className={styles.deviceBar}>
-          <span className={styles.deviceDot} />
-          <span className={styles.deviceDot} />
-          <span className={styles.deviceDot} />
-        </div>
-        <div className={styles.deviceScreen}>
-          {kind === "chat" ? (
-            <ChatMock />
-          ) : kind === "table" ? (
-            <TableMock />
-          ) : kind === "loyalty" ? (
-            <AppCardMock variant="loyalty" />
-          ) : kind === "travel" ? (
-            <AppCardMock variant="travel" />
-          ) : (
-            <DashboardMock label={label} />
-          )}
-        </div>
+/** A tilting browser/device frame that renders a project's mock UI. When the
+ *  project has a live URL the whole frame becomes a link ("Visit" cursor). */
+export function DeviceCard({ kind, label, href }: { kind: MockKind; label: string; href?: string }) {
+  const card = (
+    <Tilt
+      className={styles.device}
+      max={9}
+      scale={1.025}
+      cursor={href ? "view" : "tilt"}
+      cursorLabel={href ? "Visit" : undefined}
+    >
+      <div className={styles.deviceBar}>
+        <span className={styles.deviceDot} />
+        <span className={styles.deviceDot} />
+        <span className={styles.deviceDot} />
       </div>
-    </div>
+      <div className={styles.deviceScreen}>
+        {kind === "chat" ? (
+          <ChatMock />
+        ) : kind === "table" ? (
+          <TableMock />
+        ) : kind === "loyalty" ? (
+          <AppCardMock variant="loyalty" />
+        ) : kind === "travel" ? (
+          <AppCardMock variant="travel" />
+        ) : (
+          <DashboardMock label={label} />
+        )}
+      </div>
+    </Tilt>
+  );
+  if (!href) return card;
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={styles.deviceLink}
+      aria-label={`Open ${label}`}
+      draggable={false}
+    >
+      {card}
+    </a>
   );
 }

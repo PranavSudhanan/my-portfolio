@@ -1,6 +1,9 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { FaLinkedinIn, FaGithub } from "react-icons/fa6";
+import { FiCheck, FiCopy } from "react-icons/fi";
 import { profile } from "@/lib/data";
 import { Rise } from "../Rise";
 import { Magnetic } from "../Magnetic";
@@ -9,7 +12,44 @@ import { P } from "../Parallax";
 import { Cube } from "../Cube";
 import styles from "../v3.module.css";
 
+/** Old-school copy for browsers that deny the async Clipboard API. */
+function legacyCopy(text: string) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try {
+    ok = document.execCommand("copy");
+  } catch {
+    ok = false;
+  }
+  ta.remove();
+  return ok;
+}
+
 export function Contact({ show }: { show: boolean }) {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  const copy = async () => {
+    let ok = false;
+    try {
+      await navigator.clipboard.writeText(profile.email);
+      ok = true;
+    } catch {
+      ok = legacyCopy(profile.email);
+    }
+    if (!ok) return; // clipboard blocked entirely — the mailto link still works
+    setCopied(true);
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setCopied(false), 1800);
+  };
+
   return (
     <section className={styles.section}>
       <P depth={30} style={{ right: "12%", bottom: "16%" }}>
@@ -39,9 +79,37 @@ export function Contact({ show }: { show: boolean }) {
               </a>
               .
             </p>
-            <a href={`mailto:${profile.email}`} className={`${styles.bigMail} mt-8 block text-lg sm:text-2xl lg:text-3xl`}>
-              {profile.email}
-            </a>
+            <div className={`${styles.mailRow} mt-8`}>
+              <a href={`mailto:${profile.email}`} className={`${styles.bigMail} text-lg sm:text-2xl lg:text-3xl`}>
+                {profile.email}
+              </a>
+              <Magnetic strength={0.45}>
+                <button
+                  type="button"
+                  onClick={copy}
+                  className={`${styles.copyBtn} ${copied ? styles.copyDone : ""}`}
+                  aria-label={copied ? "Email copied" : "Copy email address"}
+                  data-cursor="copy"
+                  data-cursor-label={copied ? "Done" : "Copy"}
+                >
+                  {copied ? <FiCheck /> : <FiCopy />}
+                </button>
+              </Magnetic>
+              <AnimatePresence>
+                {copied && (
+                  <motion.span
+                    className={styles.toast}
+                    role="status"
+                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    Copied to clipboard
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </div>
             <div className="mt-8 flex items-center gap-4">
               <Magnetic strength={0.5}>
                 <a
@@ -49,7 +117,7 @@ export function Contact({ show }: { show: boolean }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
-                  className="grid h-11 w-11 place-items-center rounded-lg border border-[var(--line)] text-[var(--muted)] transition-colors hover:border-[var(--purple)] hover:text-[var(--fg)]"
+                  className={styles.socialBtn}
                 >
                   <FaLinkedinIn />
                 </a>
@@ -60,7 +128,7 @@ export function Contact({ show }: { show: boolean }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="GitHub"
-                  className="grid h-11 w-11 place-items-center rounded-lg border border-[var(--line)] text-[var(--muted)] transition-colors hover:border-[var(--purple)] hover:text-[var(--fg)]"
+                  className={styles.socialBtn}
                 >
                   <FaGithub />
                 </a>

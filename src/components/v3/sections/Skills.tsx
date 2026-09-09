@@ -6,11 +6,18 @@ import { Rise } from "../Rise";
 import { Cube } from "../Cube";
 import { P } from "../Parallax";
 import { CodeBars } from "../CodeBars";
-import { skills } from "../constants";
+import { Magnetic } from "../Magnetic";
+import { skills, type SkillGroup } from "../constants";
 import styles from "../v3.module.css";
 
 export function Skills({ show }: { show: boolean }) {
-  const [activeSkill, setActiveSkill] = useState<string | null>(null);
+  const [pinned, setPinned] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const focus = hovered ?? pinned;
+  const focusGroup: SkillGroup | null = focus
+    ? (skills.find((s) => s.name === focus)?.group ?? null)
+    : null;
+
   return (
     <section className={styles.section}>
       <CodeBars where="bl" />
@@ -39,18 +46,36 @@ export function Skills({ show }: { show: boolean }) {
             </p>
           </Rise>
           <Rise show={show} from="up" delay={0.26}>
-            <div className="mx-auto mt-12 grid max-w-4xl grid-cols-3 gap-x-6 gap-y-9 sm:grid-cols-5 lg:grid-cols-7">
-              {skills.map((s) => (
-                <button
-                  key={s.name}
-                  type="button"
-                  onClick={() => setActiveSkill((p) => (p === s.name ? null : s.name))}
-                  className={`${styles.skillItem} ${activeSkill === s.name ? styles.skillActive : ""}`}
-                >
-                  <s.Icon size={34} />
-                  <span>{s.name}</span>
-                </button>
-              ))}
+            {/* hover/tap a skill: it lights up and shows its area; siblings in
+                the same area glow while everything else steps back */}
+            <div
+              className={`${styles.skillGrid} mx-auto mt-12 grid max-w-4xl grid-cols-3 gap-x-6 gap-y-9 sm:grid-cols-5 lg:grid-cols-7`}
+              data-focused={focusGroup ? "true" : undefined}
+              onMouseLeave={() => setHovered(null)}
+            >
+              {skills.map((s) => {
+                const isFocus = focus === s.name;
+                const isKin = !isFocus && focusGroup === s.group;
+                return (
+                  <Magnetic key={s.name} strength={0.3} className={styles.skillCell}>
+                    <button
+                      type="button"
+                      onClick={() => setPinned((p) => (p === s.name ? null : s.name))}
+                      onMouseEnter={() => setHovered(s.name)}
+                      onFocus={() => setHovered(s.name)}
+                      onBlur={() => setHovered(null)}
+                      className={`${styles.skillItem} ${isFocus ? styles.skillActive : ""} ${isKin ? styles.skillKin : ""}`}
+                      aria-pressed={pinned === s.name}
+                    >
+                      <span className={styles.skillIcon}>
+                        <s.Icon size={34} />
+                      </span>
+                      <span>{s.name}</span>
+                      <span className={styles.skillTag}>{s.group}</span>
+                    </button>
+                  </Magnetic>
+                );
+              })}
             </div>
           </Rise>
         </div>

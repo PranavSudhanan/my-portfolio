@@ -142,6 +142,13 @@ export function useFullpage() {
         navigate(-1);
       } else if (e.key === "Home") goTo(0);
       else if (e.key === "End") goTo(N - 1);
+      else if (activeRef.current === PORTFOLIO && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
+        // left/right flip project slides while on the portfolio section
+        e.preventDefault();
+        const s = slideRef.current;
+        if (e.key === "ArrowRight" && s < LAST_SLIDE) setSlide(s + 1);
+        else if (e.key === "ArrowLeft" && s > 0) setSlide(s - 1);
+      }
     };
 
     el.addEventListener("wheel", onWheel, { passive: false });
@@ -158,7 +165,8 @@ export function useFullpage() {
     };
   }, [navigate, goTo, scrollerFor]);
 
-  // cursor parallax + spotlight position (as CSS vars on the root)
+  // cursor parallax (-1..1 across the viewport, as CSS vars on the root);
+  // the raw pointer position for the glow/grid is owned by <Cursor />
   const onMouseMove = useCallback((e: React.MouseEvent) => {
     const px = (e.clientX / window.innerWidth - 0.5) * 2;
     const py = (e.clientY / window.innerHeight - 0.5) * 2;
@@ -166,8 +174,6 @@ export function useFullpage() {
     if (el) {
       el.style.setProperty("--px", px.toFixed(3));
       el.style.setProperty("--py", py.toFixed(3));
-      el.style.setProperty("--cx", String(Math.round(e.clientX)));
-      el.style.setProperty("--cy", String(Math.round(e.clientY)));
     }
   }, []);
 

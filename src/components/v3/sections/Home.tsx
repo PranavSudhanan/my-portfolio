@@ -5,6 +5,8 @@ import { Rise } from "../Rise";
 import { Cube } from "../Cube";
 import { P } from "../Parallax";
 import { CodeBars } from "../CodeBars";
+import { Tilt } from "../Tilt";
+import { ProximityText } from "../ProximityText";
 import styles from "../v3.module.css";
 
 export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) {
@@ -32,11 +34,11 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
           <div>
             <Rise show={show} from="left" delay={0.05}>
               <h1 className={styles.h1}>
-                Full-Stack
+                <ProximityText text="Full-Stack" />
                 <br />
-                Software
+                <ProximityText text="Software" />
                 <br />
-                <span className={styles.aPurple}>Engineer</span>
+                <ProximityText text="Engineer" className={`${styles.aPurple} ${styles.proxAccent}`} />
               </h1>
             </Rise>
             <Rise show={show} from="left" delay={0.15}>
@@ -54,7 +56,7 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
           </div>
 
           <Rise show={show} from="right" delay={0.2} className={`${styles.heroArt} relative`}>
-            <div className={styles.codeWin}>
+            <Tilt className={styles.codeWin} max={8} scale={1.02}>
               <div className={styles.codeTop}>
                 <span className={styles.codeDot} style={{ background: "#ff5f57" }} />
                 <span className={styles.codeDot} style={{ background: "#febc2e" }} />
@@ -79,11 +81,12 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
                   focus: <span className={styles.aAmber}>&apos;AI · Web . API&apos;</span>,
                 </div>
                 <div style={{ paddingLeft: 18, color: "var(--muted)" }}>
-                  available: <span className={styles.aPurple}>true</span>,
+                  available: <span className={styles.aPurple}>true</span>
+                  <span className={styles.caret} aria-hidden />,
                 </div>
                 <div>{"};"}</div>
               </div>
-            </div>
+            </Tilt>
           </Rise>
         </div>
       </div>

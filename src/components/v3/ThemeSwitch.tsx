@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import type { IconType } from "react-icons";
 import { FiSun, FiMoon, FiMonitor } from "react-icons/fi";
 import type { ThemeMode } from "./useTheme";
@@ -11,7 +12,8 @@ const OPTIONS: { key: ThemeMode; label: string; Icon: IconType }[] = [
   { key: "system", label: "System", Icon: FiMonitor },
 ];
 
-/** Segmented light / dark / system control for the top bar. */
+/** Segmented light / dark / system control for the top bar. The active
+ *  highlight is a shared-layout pill that slides between options. */
 export function ThemeSwitch({
   mode,
   setMode,
@@ -31,7 +33,16 @@ export function ThemeSwitch({
           aria-label={`${label} theme`}
           title={`${label} theme`}
         >
-          <Icon size={15} />
+          {mode === key && (
+            <motion.span
+              layoutId="theme-pill"
+              className={styles.themePill}
+              transition={{ type: "spring", stiffness: 520, damping: 36 }}
+            />
+          )}
+          <span className={styles.themeIcon}>
+            <Icon size={15} />
+          </span>
         </button>
       ))}
     </div>

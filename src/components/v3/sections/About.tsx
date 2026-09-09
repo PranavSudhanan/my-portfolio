@@ -6,6 +6,7 @@ import { profile } from "@/lib/data";
 import { Rise } from "../Rise";
 import { Cube } from "../Cube";
 import { P } from "../Parallax";
+import { Tilt } from "../Tilt";
 import styles from "../v3.module.css";
 
 export function About({ show }: { show: boolean }) {
@@ -28,8 +29,12 @@ export function About({ show }: { show: boolean }) {
             <p className={`${styles.lead} mt-3`}>Full-Stack Developer · API &amp; AI</p>
           </Rise>
 
-          <Rise show={show} from="up" delay={0.15} className={styles.portraitWrap}>
-            <Image src={profile.profileImage} alt={profile.name} fill sizes="340px" className={styles.portrait} />
+          <Rise show={show} from="up" delay={0.15}>
+            {/* tilts toward the pointer and blooms from monochrome to colour on hover */}
+            <Tilt className={styles.portraitWrap} max={7} scale={1.03} glare={false}>
+              <Image src={profile.profileImage} alt={profile.name} fill sizes="340px" className={styles.portrait} />
+              <span className={styles.portraitFrame} aria-hidden />
+            </Tilt>
           </Rise>
 
           <Rise show={show} from="right" delay={0.25}>
