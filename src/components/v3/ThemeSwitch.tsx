@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import type { IconType } from "react-icons";
 import { FiSun, FiMoon, FiMonitor } from "react-icons/fi";
 import type { ThemeMode } from "./useTheme";
+import { haptic } from "./haptics";
 import styles from "./v3.module.css";
 
 const OPTIONS: { key: ThemeMode; label: string; Icon: IconType }[] = [
@@ -28,7 +29,10 @@ export function ThemeSwitch({
         <button
           key={key}
           type="button"
-          onClick={() => setMode(key)}
+          onClick={() => {
+            haptic();
+            setMode(key);
+          }}
           className={`${styles.themeBtn} ${mode === key ? styles.themeBtnActive : ""}`}
           aria-pressed={mode === key}
           aria-label={`${label} theme`}

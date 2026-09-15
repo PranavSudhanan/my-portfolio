@@ -5,8 +5,8 @@ import styles from "./v3.module.css";
 
 /**
  * Splits `text` into characters that lift and tint as the pointer approaches
- * (within `radius` px). Pure DOM writes on rAF — no React re-renders. Falls
- * back to plain static text on touch devices and for reduced-motion users.
+ * (within `radius` px) — or as a finger slides across them on touch screens.
+ * Pure DOM writes on rAF — no React re-renders. Static for reduced motion.
  */
 export function ProximityText({
   text,
@@ -24,11 +24,7 @@ export function ProximityText({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (
-      !window.matchMedia("(pointer: fine)").matches ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    )
-      return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const chars = Array.from(el.children) as HTMLElement[];
     const prev = new Array<number>(chars.length).fill(0);
@@ -73,12 +69,32 @@ export function ProximityText({
       px = py = -1e4;
       if (!raf) raf = requestAnimationFrame(apply);
     };
+    const onTouch = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      px = t.clientX;
+      py = t.clientY;
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (e.touches.length) return;
+      px = py = -1e4;
+      if (!raf) raf = requestAnimationFrame(apply);
+    };
     window.addEventListener("pointermove", onMove, { passive: true });
     document.addEventListener("mouseout", onOut);
+    window.addEventListener("touchstart", onTouch, { passive: true });
+    window.addEventListener("touchmove", onTouch, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("mouseout", onOut);
+      window.removeEventListener("touchstart", onTouch);
+      window.removeEventListener("touchmove", onTouch);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchcancel", onTouchEnd);
     };
   }, [radius, lift]);
 

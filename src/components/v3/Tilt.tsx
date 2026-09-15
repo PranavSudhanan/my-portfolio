@@ -15,7 +15,9 @@ const SPRING = { stiffness: 210, damping: 22, mass: 0.6 };
 /**
  * 3D card: tilts toward the pointer on springs, lifts slightly on hover and
  * carries a pointer-tracked sheen plus a glowing edge that follows the cursor
- * around its border. `cursor` / `cursorLabel` feed the custom cursor.
+ * around its border. On touch screens pressing the card tilts it toward the
+ * finger (and it follows while dragging), springing flat on release.
+ * `cursor` / `cursorLabel` feed the custom cursor.
  */
 export function Tilt({
   children,
@@ -39,6 +41,7 @@ export function Tilt({
   style?: React.CSSProperties;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const pressed = useRef(false);
   const reduce = useReducedMotion();
   const rx = useMotionValue(0);
   const ry = useMotionValue(0);
@@ -52,7 +55,8 @@ export function Tilt({
   const edge = useMotionTemplate`radial-gradient(240px circle at ${mx}% ${my}%, rgba(var(--accent-rgb), 0.7), transparent 72%)`;
 
   const onMove = (e: React.PointerEvent) => {
-    if (reduce || e.pointerType === "touch") return;
+    if (reduce) return;
+    if (e.pointerType === "touch" && !pressed.current) return;
     const r = ref.current?.getBoundingClientRect();
     if (!r || !r.width) return;
     const px = (e.clientX - r.left) / r.width - 0.5;
@@ -62,10 +66,17 @@ export function Tilt({
     mx.set((px + 0.5) * 100);
     my.set((py + 0.5) * 100);
   };
-  const onEnter = () => {
-    if (!reduce) sc.set(scale);
+  const onEnter = (e: React.PointerEvent) => {
+    if (!reduce && e.pointerType !== "touch") sc.set(scale);
+  };
+  const onDown = (e: React.PointerEvent) => {
+    if (reduce || e.pointerType !== "touch") return;
+    pressed.current = true;
+    sc.set(scale);
+    onMove(e);
   };
   const onLeave = () => {
+    pressed.current = false;
     rx.set(0);
     ry.set(0);
     sc.set(1);
@@ -79,6 +90,9 @@ export function Tilt({
       className={styles.tiltScene}
       onPointerMove={onMove}
       onPointerEnter={onEnter}
+      onPointerDown={onDown}
+      onPointerUp={onLeave}
+      onPointerCancel={onLeave}
       onPointerLeave={onLeave}
       data-cursor={cursor}
       data-cursor-label={cursorLabel}

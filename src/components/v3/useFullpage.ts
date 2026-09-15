@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { projects } from "@/lib/data";
 import { N, PORTFOLIO, SLIDE_MS } from "./constants";
+import { haptic } from "./haptics";
 import styles from "./v3.module.css";
 
 const LAST_SLIDE = projects.length - 1;
@@ -127,8 +128,10 @@ export function useFullpage() {
       const dy = e.changedTouches[0].clientY - ty;
       const dx = e.changedTouches[0].clientX - tx;
       if (Math.abs(dy) < 55 || Math.abs(dx) > Math.abs(dy)) return;
+      const wasLocked = lockRef.current;
       if (dy < 0 && startBottom) navigate(1);
       else if (dy > 0 && startTop) navigate(-1);
+      if (!wasLocked && lockRef.current) haptic(6); // a section/slide actually changed
     };
 
     const onKey = (e: KeyboardEvent) => {
@@ -165,18 +168,16 @@ export function useFullpage() {
     };
   }, [navigate, goTo, scrollerFor]);
 
-  // cursor parallax: every [data-depth] element leans toward the pointer by up
-  // to `depth` px. Transforms are written straight onto those elements from one
-  // eased rAF loop that sleeps once settled. (Setting CSS variables on the root
-  // instead forced a style recalc of the entire page on every mouse move.)
+  // parallax: every [data-depth] element leans by up to `depth` px — toward the
+  // pointer on desktop, and with the phone's tilt (gyroscope) on touch devices.
+  // Transforms are written straight onto those elements from one eased rAF loop
+  // that sleeps once settled. (Setting CSS variables on the root instead forced
+  // a style recalc of the entire page on every mouse move.)
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    if (
-      !window.matchMedia("(pointer: fine)").matches ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    )
-      return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const fine = window.matchMedia("(pointer: fine)").matches;
 
     const layers = Array.from(root.querySelectorAll<HTMLElement>("[data-depth]")).map((el) => ({
       el,
@@ -195,16 +196,65 @@ export function useFullpage() {
       }
       raf = Math.abs(tx - x) < 0.002 && Math.abs(ty - y) < 0.002 ? 0 : requestAnimationFrame(frame);
     };
-    const onMove = (e: PointerEvent) => {
-      if (e.pointerType === "touch") return;
-      tx = (e.clientX / window.innerWidth - 0.5) * 2;
-      ty = (e.clientY / window.innerHeight - 0.5) * 2;
+    const kick = () => {
       if (!raf) raf = requestAnimationFrame(frame);
     };
-    window.addEventListener("pointermove", onMove, { passive: true });
+    const clamp1 = (v: number) => Math.max(-1, Math.min(1, v));
+
+    if (fine) {
+      const onMove = (e: PointerEvent) => {
+        if (e.pointerType === "touch") return;
+        tx = (e.clientX / window.innerWidth - 0.5) * 2;
+        ty = (e.clientY / window.innerHeight - 0.5) * 2;
+        kick();
+      };
+      window.addEventListener("pointermove", onMove, { passive: true });
+      return () => {
+        cancelAnimationFrame(raf);
+        window.removeEventListener("pointermove", onMove);
+      };
+    }
+
+    // touch: tilt the phone to shift the scene. The first reading is the
+    // "neutral" hold angle, which slowly re-centres so it never drifts off.
+    let baseBeta: number | null = null;
+    let baseGamma = 0;
+    const onOrient = (e: DeviceOrientationEvent) => {
+      if (e.beta == null || e.gamma == null) return;
+      if (baseBeta == null) {
+        baseBeta = e.beta;
+        baseGamma = e.gamma;
+      }
+      baseBeta += (e.beta - baseBeta) * 0.01;
+      baseGamma += (e.gamma - baseGamma) * 0.01;
+      const nx = clamp1((e.gamma - baseGamma) / 22);
+      const ny = clamp1((e.beta - baseBeta) / 22);
+      if (Math.abs(nx - tx) < 0.004 && Math.abs(ny - ty) < 0.004) return;
+      tx = nx;
+      ty = ny;
+      kick();
+    };
+    const listen = () => window.addEventListener("deviceorientation", onOrient, { passive: true });
+
+    // iOS only grants motion access from inside a user gesture
+    type IOSOrientation = typeof DeviceOrientationEvent & {
+      requestPermission?: () => Promise<"granted" | "denied">;
+    };
+    const DOE = (typeof DeviceOrientationEvent !== "undefined" ? DeviceOrientationEvent : null) as
+      | IOSOrientation
+      | null;
+    const askOnTap = () => {
+      DOE?.requestPermission?.()
+        .then((r) => r === "granted" && listen())
+        .catch(() => {});
+    };
+    if (DOE?.requestPermission) window.addEventListener("touchend", askOnTap, { once: true });
+    else if (DOE) listen();
+
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("deviceorientation", onOrient);
+      window.removeEventListener("touchend", askOnTap);
     };
   }, []);
 

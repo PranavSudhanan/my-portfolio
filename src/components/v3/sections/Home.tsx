@@ -7,9 +7,18 @@ import { P } from "../Parallax";
 import { CodeBars } from "../CodeBars";
 import { Tilt } from "../Tilt";
 import { ProximityText } from "../ProximityText";
+import { Terminal } from "../Terminal";
 import styles from "../v3.module.css";
 
-export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) {
+export function Home({
+  show,
+  onAbout,
+  onHire,
+}: {
+  show: boolean;
+  onAbout: () => void;
+  onHire: () => void;
+}) {
   return (
     <section className={styles.section}>
       <CodeBars where="bl" />
@@ -30,7 +39,7 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
       </P>
 
       <div className={styles.inner}>
-        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
           <div>
             <Rise show={show} from="left" delay={0.05}>
               <h1 className={styles.h1}>
@@ -54,6 +63,11 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
               </button>
             </Rise>
           </div>
+
+          {/* mobile stand-in for the code window: a tap-driven terminal */}
+          <Rise show={show} from="up" delay={0.3} className={styles.termMobile}>
+            <Terminal show={show} onHire={onHire} />
+          </Rise>
 
           <Rise show={show} from="right" delay={0.2} className={`${styles.heroArt} relative`}>
             <Tilt className={styles.codeWin} max={8} scale={1.02}>

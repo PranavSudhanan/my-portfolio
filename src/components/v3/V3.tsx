@@ -7,6 +7,8 @@ import { Magnetic } from "./Magnetic";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { useTheme } from "./useTheme";
 import { Cursor } from "./Cursor";
+import { TouchFX } from "./TouchFX";
+import { Dock } from "./Dock";
 import { Dust } from "./Dust";
 import { Home } from "./sections/Home";
 import { About } from "./sections/About";
@@ -44,7 +46,7 @@ export default function V3() {
         </Magnetic>
         <div className={styles.topRight}>
           <ThemeSwitch mode={mode} setMode={setMode} />
-          <Magnetic>
+          <Magnetic className={styles.contactWrap}>
             <button className={styles.contactBtn} onClick={() => goTo(4)}>
               Contact
             </button>
@@ -85,7 +87,7 @@ export default function V3() {
             transition: `transform ${SLIDE_MS}ms cubic-bezier(0.16, 1, 0.3, 1)`,
           }}
         >
-          <Home show={active === 0} onAbout={() => goTo(1)} />
+          <Home show={active === 0} onAbout={() => goTo(1)} onHire={() => goTo(4)} />
           <About show={active === 1} />
           <Skills show={active === 2} />
           <Portfolio show={active === 3} slide={slide} setSlide={setSlide} />
@@ -93,7 +95,9 @@ export default function V3() {
         </div>
       </div>
 
+      <Dock active={active} goTo={goTo} />
       <Cursor rootRef={rootRef} />
+      <TouchFX rootRef={rootRef} />
     </div>
   );
 }

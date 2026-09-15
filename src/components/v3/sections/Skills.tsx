@@ -8,6 +8,7 @@ import { P } from "../Parallax";
 import { CodeBars } from "../CodeBars";
 import { Magnetic } from "../Magnetic";
 import { skills, type SkillGroup } from "../constants";
+import { haptic } from "../haptics";
 import styles from "../v3.module.css";
 
 export function Skills({ show }: { show: boolean }) {
@@ -60,7 +61,10 @@ export function Skills({ show }: { show: boolean }) {
                   <Magnetic key={s.name} strength={0.3} className={styles.skillCell}>
                     <button
                       type="button"
-                      onClick={() => setPinned((p) => (p === s.name ? null : s.name))}
+                      onClick={() => {
+                        haptic();
+                        setPinned((p) => (p === s.name ? null : s.name));
+                      }}
                       onMouseEnter={() => setHovered(s.name)}
                       onFocus={() => setHovered(s.name)}
                       onBlur={() => setHovered(null)}

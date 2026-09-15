@@ -9,6 +9,7 @@ import { Rise } from "../Rise";
 import { Magnetic } from "../Magnetic";
 import { P } from "../Parallax";
 import { DeviceCard } from "../DeviceCard";
+import { haptic } from "../haptics";
 import styles from "../v3.module.css";
 
 const LAST_SLIDE = projects.length - 1;
@@ -31,8 +32,13 @@ export function Portfolio({
   // snaps back while the track animates to the new slide
   const onDragEnd = (_: unknown, info: PanInfo) => {
     const { offset, velocity } = info;
-    if (offset.x < -70 || velocity.x < -450) next();
-    else if (offset.x > 70 || velocity.x > 450) prev();
+    if ((offset.x < -70 || velocity.x < -450) && slide < LAST_SLIDE) {
+      haptic();
+      next();
+    } else if ((offset.x > 70 || velocity.x > 450) && slide > 0) {
+      haptic();
+      prev();
+    }
     // keep the click that follows a drag from opening links
     window.setTimeout(() => (dragged.current = false), 60);
   };

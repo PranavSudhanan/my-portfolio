@@ -90,9 +90,23 @@ export function Dust() {
     const onOut = (e: MouseEvent) => {
       if (!e.relatedTarget) px = py = -1e4;
     };
+    // fingers push the dust too: follow the touch, release when it lifts
+    const onTouch = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      px = t.clientX;
+      py = t.clientY;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!e.touches.length) px = py = -1e4;
+    };
     if (fine) {
       window.addEventListener("pointermove", onMove, { passive: true });
       document.addEventListener("mouseout", onOut);
+    } else {
+      window.addEventListener("touchstart", onTouch, { passive: true });
+      window.addEventListener("touchmove", onTouch, { passive: true });
+      window.addEventListener("touchend", onTouchEnd, { passive: true });
     }
 
     let raf = 0;
@@ -157,6 +171,9 @@ export function Dust() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("mouseout", onOut);
+      window.removeEventListener("touchstart", onTouch);
+      window.removeEventListener("touchmove", onTouch);
+      window.removeEventListener("touchend", onTouchEnd);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
