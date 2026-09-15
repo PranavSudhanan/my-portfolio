@@ -24,7 +24,7 @@ export function About({ show }: { show: boolean }) {
             <h2 className={`${styles.h2} mt-4`}>
               Hi, I&apos;m
               <br />
-              <span className={styles.aPurple}>Pranav</span>
+              <span className={styles.aAccent}>Pranav</span>
             </h2>
             <p className={`${styles.lead} mt-3`}>Full-Stack Developer · API &amp; AI</p>
           </Rise>
@@ -41,8 +41,8 @@ export function About({ show }: { show: boolean }) {
             <p className={styles.lead}>{profile.summary}</p>
             <p className={`${styles.lead} mt-4`}>
               Currently at Leapsurge Business Innovations, I build enterprise BI
-              platforms — most recently <span className={styles.aPurple}>Aspire BI</span>{" "}
-              end to end and <span className={styles.aPurple}>LIA</span>, a
+              platforms — most recently <span className={styles.aAccent}>Aspire BI</span>{" "}
+              end to end and <span className={styles.aAccent}>LIA</span>, a
               conversational AI assistant over live Databricks data.
             </p>
             <a href={profile.resume} download className={`${styles.arrowLink} mt-6`}>

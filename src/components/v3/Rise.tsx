@@ -7,9 +7,9 @@ import { EASE } from "./constants";
    never changes between renders — prevents Framer from restarting/freezing). */
 const SHOWN = { opacity: 1, x: 0, y: 0 };
 const HIDDEN = {
-  left: { opacity: 0, x: -70, y: 0 },
-  right: { opacity: 0, x: 70, y: 0 },
-  up: { opacity: 0, x: 0, y: 45 },
+  left: { opacity: 0, x: -36, y: 0 },
+  right: { opacity: 0, x: 36, y: 0 },
+  up: { opacity: 0, x: 0, y: 28 },
 } as const;
 
 /**
@@ -35,7 +35,7 @@ export function Rise({
       className={className}
       initial={hidden}
       animate={show ? SHOWN : hidden}
-      transition={{ duration: 0.7, delay, ease: EASE }}
+      transition={{ duration: 0.55, delay: delay * 0.7, ease: EASE }}
     >
       {children}
     </motion.div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { SECTIONS, N } from "./constants";
+import { SECTIONS, N, SLIDE_MS } from "./constants";
 import { useFullpage } from "./useFullpage";
 import { Magnetic } from "./Magnetic";
 import { ThemeSwitch } from "./ThemeSwitch";
@@ -19,19 +19,20 @@ import styles from "./v3.module.css";
  *  scroll cue), the reactive backdrop (aurora, dot-grid reveal, dust) and the
  *  custom cursor, plus the snapping section track. */
 export default function V3() {
-  const { active, slide, setSlide, goTo, navigate, rootRef, containerRef, onMouseMove } =
-    useFullpage();
+  const { active, slide, setSlide, goTo, navigate, rootRef, containerRef } = useFullpage();
   const { mode, resolved, setMode } = useTheme();
 
   return (
-    <div className={styles.root} data-theme={resolved} ref={rootRef} onMouseMove={onMouseMove}>
+    <div className={styles.root} data-theme={resolved} ref={rootRef}>
       {/* ---- reactive backdrop ---- */}
       <div className={styles.aurora} aria-hidden>
-        <span className={styles.auroraA} />
-        <span className={styles.auroraB} />
+        <span className={styles.auroraA} data-depth={40} />
+        <span className={styles.auroraB} data-depth={40} />
       </div>
       <div className={styles.gridBase} aria-hidden />
-      <div className={styles.gridReveal} aria-hidden />
+      <div className={styles.gridReveal} aria-hidden>
+        <div className={styles.gridRevealDots} />
+      </div>
       <Dust />
 
       <div className={styles.topbar}>
@@ -76,10 +77,12 @@ export default function V3() {
 
       <div ref={containerRef} className={styles.viewport}>
         <div
-          className={`${styles.track} ${styles.engineMode}`}
+          className={styles.track}
           style={{
-            transform: `translateY(-${active * (100 / N)}%)`,
-            transition: "transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)",
+            transform: `translate3d(0, -${active * (100 / N)}%, 0)`,
+            // expo-out: moves the instant you scroll, then settles softly
+            // (the old ease-in-out spent its first ~200ms barely moving)
+            transition: `transform ${SLIDE_MS}ms cubic-bezier(0.16, 1, 0.3, 1)`,
           }}
         >
           <Home show={active === 0} onAbout={() => goTo(1)} />

@@ -17,7 +17,7 @@ export default function OpengraphImage() {
           justifyContent: "space-between",
           padding: 80,
           background:
-            "radial-gradient(900px circle at 15% 10%, rgba(139,124,255,0.35), transparent 45%), radial-gradient(900px circle at 90% 30%, rgba(52,213,240,0.28), transparent 45%), #06070e",
+            "radial-gradient(900px circle at 15% 10%, rgba(52,211,153,0.28), transparent 45%), radial-gradient(900px circle at 90% 30%, rgba(56,189,248,0.22), transparent 45%), #0b0f14",
           fontFamily: "sans-serif",
         }}
       >
@@ -30,27 +30,27 @@ export default function OpengraphImage() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              background: "linear-gradient(135deg, #8b7cff, #34d5f0)",
-              color: "#06070e",
+              background: "linear-gradient(135deg, #34d399, #38bdf8)",
+              color: "#0b0f14",
               fontSize: 34,
               fontWeight: 800,
             }}
           >
             PS
           </div>
-          <div style={{ display: "flex", color: "#a2a9bd", fontSize: 28 }}>
+          <div style={{ display: "flex", color: "#8d99a6", fontSize: 28 }}>
             Portfolio
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", color: "#34d5f0", fontSize: 30, marginBottom: 12 }}>
+          <div style={{ display: "flex", color: "#38bdf8", fontSize: 30, marginBottom: 12 }}>
             {profile.location}
           </div>
           <div
             style={{
               display: "flex",
-              color: "#eef0f8",
+              color: "#e6edf3",
               fontSize: 92,
               fontWeight: 800,
               letterSpacing: -2,
@@ -64,7 +64,7 @@ export default function OpengraphImage() {
               marginTop: 8,
               fontSize: 44,
               fontWeight: 700,
-              background: "linear-gradient(90deg, #8b7cff, #34d5f0)",
+              background: "linear-gradient(90deg, #34d399, #38bdf8)",
               backgroundClip: "text",
               color: "transparent",
             }}
@@ -83,7 +83,7 @@ export default function OpengraphImage() {
                   padding: "10px 22px",
                   borderRadius: 999,
                   border: "1px solid rgba(255,255,255,0.15)",
-                  color: "#eef0f8",
+                  color: "#e6edf3",
                   fontSize: 26,
                 }}
               >

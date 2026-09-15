@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { projects } from "@/lib/data";
-import { N, PORTFOLIO } from "./constants";
+import { N, PORTFOLIO, SLIDE_MS } from "./constants";
 import styles from "./v3.module.css";
 
 const LAST_SLIDE = projects.length - 1;
@@ -30,7 +30,7 @@ export function useFullpage() {
 
   const lock = useCallback(() => {
     lockRef.current = true;
-    window.setTimeout(() => (lockRef.current = false), 950);
+    window.setTimeout(() => (lockRef.current = false), SLIDE_MS + 50);
   }, []);
 
   // the internal scroller of a section (content scrolls when taller than viewport)
@@ -165,17 +165,48 @@ export function useFullpage() {
     };
   }, [navigate, goTo, scrollerFor]);
 
-  // cursor parallax (-1..1 across the viewport, as CSS vars on the root);
-  // the raw pointer position for the glow/grid is owned by <Cursor />
-  const onMouseMove = useCallback((e: React.MouseEvent) => {
-    const px = (e.clientX / window.innerWidth - 0.5) * 2;
-    const py = (e.clientY / window.innerHeight - 0.5) * 2;
-    const el = rootRef.current;
-    if (el) {
-      el.style.setProperty("--px", px.toFixed(3));
-      el.style.setProperty("--py", py.toFixed(3));
-    }
+  // cursor parallax: every [data-depth] element leans toward the pointer by up
+  // to `depth` px. Transforms are written straight onto those elements from one
+  // eased rAF loop that sleeps once settled. (Setting CSS variables on the root
+  // instead forced a style recalc of the entire page on every mouse move.)
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    if (
+      !window.matchMedia("(pointer: fine)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+
+    const layers = Array.from(root.querySelectorAll<HTMLElement>("[data-depth]")).map((el) => ({
+      el,
+      depth: Number(el.dataset.depth) || 0,
+    }));
+    let tx = 0;
+    let ty = 0;
+    let x = 0;
+    let y = 0;
+    let raf = 0;
+    const frame = () => {
+      x += (tx - x) * 0.08;
+      y += (ty - y) * 0.08;
+      for (const { el, depth } of layers) {
+        el.style.transform = `translate3d(${(x * depth).toFixed(2)}px, ${(y * depth).toFixed(2)}px, 0)`;
+      }
+      raf = Math.abs(tx - x) < 0.002 && Math.abs(ty - y) < 0.002 ? 0 : requestAnimationFrame(frame);
+    };
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      tx = (e.clientX / window.innerWidth - 0.5) * 2;
+      ty = (e.clientY / window.innerHeight - 0.5) * 2;
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+    };
   }, []);
 
-  return { active, slide, setSlide, goTo, navigate, rootRef, containerRef, onMouseMove };
+  return { active, slide, setSlide, goTo, navigate, rootRef, containerRef };
 }

@@ -43,7 +43,7 @@ export function Portfolio({
         <div className={`${styles.orb} ${styles.floatB}`} style={{ width: 120, height: 120 }} />
       </P>
       <P depth={35} style={{ left: "3%", bottom: "12%" }}>
-        <div className={`${styles.orb} ${styles.orbPurple} ${styles.floatA}`} style={{ width: 54, height: 54 }} />
+        <div className={`${styles.orb} ${styles.orbAccent} ${styles.floatA}`} style={{ width: 54, height: 54 }} />
       </P>
 
       <div className={styles.inner}>
@@ -52,7 +52,7 @@ export function Portfolio({
             <div>
               <p className={styles.kicker}>Selected work</p>
               <h2 className={`${styles.h2} mt-3`}>
-                Portfolio &amp; <span className={styles.aPurple}>Projects</span>
+                Portfolio &amp; <span className={styles.aAccent}>Projects</span>
               </h2>
             </div>
             <div className="hidden items-center gap-3 sm:flex">

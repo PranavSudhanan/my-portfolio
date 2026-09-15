@@ -13,7 +13,8 @@ const OPTIONS: { key: ThemeMode; label: string; Icon: IconType }[] = [
 ];
 
 /** Segmented light / dark / system control for the top bar. The active
- *  highlight is a shared-layout pill that slides between options. */
+ *  highlight is a shared-layout pill that slides between options; each option
+ *  has a styled tooltip. */
 export function ThemeSwitch({
   mode,
   setMode,
@@ -31,13 +32,13 @@ export function ThemeSwitch({
           className={`${styles.themeBtn} ${mode === key ? styles.themeBtnActive : ""}`}
           aria-pressed={mode === key}
           aria-label={`${label} theme`}
-          title={`${label} theme`}
+          data-tip={label}
         >
           {mode === key && (
             <motion.span
               layoutId="theme-pill"
               className={styles.themePill}
-              transition={{ type: "spring", stiffness: 520, damping: 36 }}
+              transition={{ type: "spring", stiffness: 420, damping: 34 }}
             />
           )}
           <span className={styles.themeIcon}>

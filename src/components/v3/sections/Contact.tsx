@@ -60,7 +60,7 @@ export function Contact({ show }: { show: boolean }) {
       <div className={styles.inner}>
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <Rise show={show} from="left" delay={0.1} className="order-last lg:order-first">
-            <Globe />
+            <Globe active={show} />
           </Rise>
 
           <Rise show={show} from="right" delay={0.15}>
@@ -74,7 +74,7 @@ export function Contact({ show }: { show: boolean }) {
             <p className={`${styles.lead} mt-5`}>
               Whether you want to start a new project or just say hello, I&apos;d love
               to hear from you. You can also connect with me on{" "}
-              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className={styles.aAmber}>
+              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className={styles.aAlt}>
                 LinkedIn
               </a>
               .
@@ -89,8 +89,6 @@ export function Contact({ show }: { show: boolean }) {
                   onClick={copy}
                   className={`${styles.copyBtn} ${copied ? styles.copyDone : ""}`}
                   aria-label={copied ? "Email copied" : "Copy email address"}
-                  data-cursor="copy"
-                  data-cursor-label={copied ? "Done" : "Copy"}
                 >
                   {copied ? <FiCheck /> : <FiCopy />}
                 </button>

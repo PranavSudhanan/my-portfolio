@@ -39,7 +39,7 @@ export function Skills({ show }: { show: boolean }) {
               I specialise in end-to-end web and data platforms — Python, Django
               and FastAPI on the backend; React and Next.js on the front; SQL,
               Databricks and Azure behind the scenes. For a deeper look, visit my{" "}
-              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className={styles.aAmber}>
+              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className={styles.aAlt}>
                 LinkedIn
               </a>
               .

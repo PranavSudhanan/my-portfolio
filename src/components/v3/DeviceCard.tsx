@@ -97,7 +97,7 @@ function TableMock() {
             <span className={styles.tStatus}>
               <i
                 className={styles.tDot}
-                style={{ background: r[2] === "Review" ? "var(--amber)" : "#3ddc97" }}
+                style={{ background: r[2] === "Review" ? "var(--accent-2)" : "var(--accent)" }}
               />
               {r[2]}
             </span>

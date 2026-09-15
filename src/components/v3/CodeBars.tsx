@@ -8,10 +8,14 @@ export function CodeBars({ where }: { where: "tl" | "bl" | "tr" | "br" }) {
     tr: { top: 24, right: 24, alignItems: "flex-end" },
     br: { bottom: 24, right: 24, alignItems: "flex-end" },
   };
+  const accent = "rgba(var(--accent-rgb), 0.55)";
+  const accent2 = "rgba(var(--accent2-rgb), 0.45)";
+  const dim = "var(--surface-3)";
+  const mid = "var(--line-strong)";
   const rows = [
-    [["#9b93c9", 34], ["#3a3a44", 20]],
-    [["#57575f", 18], ["#6b6494", 40], ["#3a3a44", 14]],
-    [["#48484f", 26], ["#3a3a44", 22]],
+    [[accent, 34], [dim, 20]],
+    [[mid, 18], [accent2, 40], [dim, 14]],
+    [[mid, 26], [dim, 22]],
   ] as const;
   return (
     <div className={styles.bars} style={pos[where]}>

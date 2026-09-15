@@ -19,7 +19,7 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
         </div>
       </P>
       <P depth={30} style={{ right: "30%", top: "18%" }}>
-        <div className={`${styles.orb} ${styles.orbPurple} ${styles.floatB}`} style={{ width: 26, height: 26 }} />
+        <div className={`${styles.orb} ${styles.orbAccent} ${styles.floatB}`} style={{ width: 26, height: 26 }} />
       </P>
       {/* dark cube floating above the code window's top-right corner — kept at
          section level so it's never clipped by the .inner scroll container */}
@@ -38,7 +38,7 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
                 <br />
                 <ProximityText text="Software" />
                 <br />
-                <ProximityText text="Engineer" className={`${styles.aPurple} ${styles.proxAccent}`} />
+                <ProximityText text="Engineer" className={`${styles.aAccent} ${styles.proxAccent}`} />
               </h1>
             </Rise>
             <Rise show={show} from="left" delay={0.15}>
@@ -64,24 +64,24 @@ export function Home({ show, onAbout }: { show: boolean; onAbout: () => void }) 
               </div>
               <div className={styles.codeBody}>
                 <div>
-                  <span className={styles.aPurple}>const</span> engineer = {"{"}
+                  <span className={styles.aAlt}>const</span> engineer = {"{"}
                 </div>
                 <div style={{ paddingLeft: 18, color: "var(--muted)" }}>
-                  name: <span className={styles.aAmber}>&apos;Pranav S L&apos;</span>,
+                  name: <span className={styles.aAccent}>&apos;Pranav S L&apos;</span>,
                 </div>
                 <div style={{ paddingLeft: 18, color: "var(--muted)" }}>
-                  stack: [<span className={styles.aAmber}>&apos;Python&apos;</span>,{" "}
-                  <span className={styles.aAmber}>&apos;FastAPI&apos;</span>,
+                  stack: [<span className={styles.aAccent}>&apos;Python&apos;</span>,{" "}
+                  <span className={styles.aAccent}>&apos;FastAPI&apos;</span>,
                 </div>
                 <div style={{ paddingLeft: 60, color: "var(--muted)" }}>
-                  <span className={styles.aAmber}>&apos;React&apos;</span>,{" "}
-                  <span className={styles.aAmber}>&apos;Next.js&apos;</span>],
+                  <span className={styles.aAccent}>&apos;React&apos;</span>,{" "}
+                  <span className={styles.aAccent}>&apos;Next.js&apos;</span>],
                 </div>
                 <div style={{ paddingLeft: 18, color: "var(--muted)" }}>
-                  focus: <span className={styles.aAmber}>&apos;AI · Web . API&apos;</span>,
+                  focus: <span className={styles.aAccent}>&apos;AI · Web . API&apos;</span>,
                 </div>
                 <div style={{ paddingLeft: 18, color: "var(--muted)" }}>
-                  available: <span className={styles.aPurple}>true</span>
+                  available: <span className={styles.aAlt}>true</span>
                   <span className={styles.caret} aria-hidden />,
                 </div>
                 <div>{"};"}</div>

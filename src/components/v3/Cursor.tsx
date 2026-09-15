@@ -18,8 +18,8 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
  * elements, a soft accent glow that trails behind, and a click ripple.
  * Desktop-only (fine pointer + hover) and disabled for reduced-motion users;
  * on touch devices it renders nothing and the native cursor is untouched.
- * It also publishes the smoothed pointer position as `--cx` / `--cy` on the
- * root so CSS layers (the dot-grid reveal) can follow it.
+ * It also moves the dot-grid reveal on the root with the ring (transforms
+ * only — no per-frame CSS variables, which would restyle the whole page).
  */
 export function Cursor({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | null> }) {
   const layerRef = useRef<HTMLDivElement>(null);
@@ -53,6 +53,9 @@ export function Cursor({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | 
     const glow = glowRef.current;
     const ripple = rippleRef.current;
     if (!root || !layer || !dot || !ring || !label || !glow || !ripple) return;
+    const reveal = root.querySelector<HTMLElement>("." + styles.gridReveal);
+    const revealDots = reveal?.firstElementChild as HTMLElement | null;
+    const half = reveal ? reveal.offsetWidth / 2 : 0;
 
     root.classList.add(styles.hasCursor);
 
@@ -72,6 +75,8 @@ export function Cursor({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | 
       ring.dataset.kind = el ? el.getAttribute("data-cursor") || "link" : "";
       label.textContent = el?.getAttribute("data-cursor-label") ?? "";
       root.classList.toggle(styles.cursorHover, !!el);
+      // plain buttons/links get the system hand pointer back
+      root.classList.toggle(styles.cursorNative, ring.dataset.kind === "link");
     };
 
     const frame = () => {
@@ -82,8 +87,13 @@ export function Cursor({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | 
       dot.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
       ring.style.transform = `translate3d(${rx.toFixed(2)}px, ${ry.toFixed(2)}px, 0)`;
       glow.style.transform = `translate3d(${gx.toFixed(2)}px, ${gy.toFixed(2)}px, 0)`;
-      root.style.setProperty("--cx", rx.toFixed(1));
-      root.style.setProperty("--cy", ry.toFixed(1));
+      if (reveal && revealDots) {
+        // window follows the ring; its dot sheet counter-moves to stay aligned
+        const ox = rx - half;
+        const oy = ry - half;
+        reveal.style.transform = `translate3d(${ox.toFixed(1)}px, ${oy.toFixed(1)}px, 0)`;
+        revealDots.style.transform = `translate3d(${(-ox).toFixed(1)}px, ${(-oy).toFixed(1)}px, 0)`;
+      }
       const settled =
         Math.abs(gx - tx) < 0.15 &&
         Math.abs(gy - ty) < 0.15 &&
@@ -164,9 +174,9 @@ export function Cursor({ rootRef }: { rootRef: React.RefObject<HTMLDivElement | 
       window.clearTimeout(recheckTimer);
       window.removeEventListener("wheel", scheduleRecheck);
       window.removeEventListener("keyup", scheduleRecheck);
-      root.classList.remove(styles.hasCursor, styles.cursorHover, styles.cursorDown);
-      root.style.removeProperty("--cx");
-      root.style.removeProperty("--cy");
+      root.classList.remove(styles.hasCursor, styles.cursorHover, styles.cursorDown, styles.cursorNative);
+      reveal?.style.removeProperty("transform");
+      revealDots?.style.removeProperty("transform");
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerup", onUp);

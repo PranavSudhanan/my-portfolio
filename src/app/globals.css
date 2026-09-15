@@ -6,7 +6,7 @@
   --font-display: var(--font-space-grotesk), var(--font-inter), sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
 
-  --color-bg: #06070e;
+  --color-bg: #0b0f14;
   --color-bg-soft: #0a0c16;
   --color-surface: #0e1120;
   --color-line: rgba(255, 255, 255, 0.08);
@@ -77,8 +77,7 @@ body::after {
 }
 
 ::selection {
-  background: rgba(139, 124, 255, 0.35);
-  color: #fff;
+  background: rgba(52, 211, 153, 0.3);
 }
 
 /* Scrollbar */
@@ -209,6 +208,38 @@ body::after {
 /* Grid glow line for timeline */
 .timeline-line {
   background: linear-gradient(180deg, transparent, var(--color-violet) 12%, var(--color-cyan) 88%, transparent);
+}
+
+/* ───────────────────────────  Theme switch animation  ─────────────────────────── */
+/* Minimal cross-fade between themes (view transition started in useTheme) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: ease-out;
+}
+/* the custom cursor stays live and on top during the fade */
+::view-transition-group(v3-cursor) {
+  z-index: 100;
+  animation: none;
+}
+::view-transition-old(v3-cursor) {
+  display: none;
+}
+::view-transition-new(v3-cursor) {
+  animation: none;
+}
+
+/* fallback for browsers without view transitions: a brief colour cross-fade */
+.theme-fading,
+.theme-fading *,
+.theme-fading *::before,
+.theme-fading *::after {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease,
+    fill 0.35s ease,
+    box-shadow 0.35s ease !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

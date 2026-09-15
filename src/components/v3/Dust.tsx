@@ -10,7 +10,7 @@ type Speck = {
   vx: number;
   vy: number;
   a: number;
-  tone: 0 | 1 | 2; // neutral | accent | amber
+  tone: 0 | 1 | 2; // neutral | accent (emerald) | accent-2 (sky)
   phase: number;
   ox: number; // pointer-induced offset (eases back to 0)
   oy: number;
@@ -18,15 +18,12 @@ type Speck = {
 
 const REPEL = 160;
 
-function fill(tone: Speck["tone"], light: boolean, alpha: number) {
-  const rgb =
-    tone === 1
-      ? light ? "109, 79, 214" : "167, 139, 250"
-      : tone === 2
-        ? light ? "181, 121, 43" : "211, 184, 146"
-        : light ? "60, 55, 90" : "222, 222, 236";
-  return `rgba(${rgb}, ${alpha.toFixed(3)})`;
-}
+/** Solid tone colours per theme; per-speck opacity goes through globalAlpha,
+ *  so no colour strings are built inside the frame loop. */
+const TONES = {
+  dark: ["rgb(222, 228, 236)", "rgb(52, 211, 153)", "rgb(56, 189, 248)"],
+  light: ["rgb(60, 70, 85)", "rgb(5, 150, 105)", "rgb(2, 132, 199)"],
+} as const;
 
 /**
  * Ambient "dust": a few dozen slowly rising specks on a full-screen canvas.
@@ -44,6 +41,7 @@ export function Dust() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const fine = window.matchMedia("(pointer: fine)").matches;
+    const themeEl = canvas.closest("[data-theme]");
 
     let W = 0;
     let H = 0;
@@ -69,7 +67,9 @@ export function Dust() {
       }
     };
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // soft 1–3px specks don't need a retina buffer; a smaller canvas is far
+      // cheaper to clear and re-upload every frame
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       W = window.innerWidth;
       H = window.innerHeight;
       canvas.width = Math.round(W * dpr);
@@ -103,7 +103,7 @@ export function Dust() {
       const dt = Math.min(48, now - last) / 16.67; // frames, clamped after a stall
       last = now;
       t += dt;
-      const light = canvas.closest("[data-theme]")?.getAttribute("data-theme") === "light";
+      const tones = TONES[themeEl?.getAttribute("data-theme") === "light" ? "light" : "dark"];
       ctx.clearRect(0, 0, W, H);
 
       for (const s of specks) {
@@ -133,9 +133,11 @@ export function Dust() {
 
         ctx.beginPath();
         ctx.arc(s.x + s.ox, s.y + s.oy, s.r + near * 1.4, 0, Math.PI * 2);
-        ctx.fillStyle = fill(s.tone, light, Math.min(1, s.a + near * 0.55));
+        ctx.globalAlpha = Math.min(1, s.a + near * 0.55);
+        ctx.fillStyle = tones[s.tone];
         ctx.fill();
       }
+      ctx.globalAlpha = 1;
     };
     raf = requestAnimationFrame(draw);
 

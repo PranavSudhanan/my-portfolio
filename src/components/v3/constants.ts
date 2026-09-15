@@ -21,6 +21,9 @@ export const SECTIONS = ["home", "about", "skills", "portfolio", "contact"];
 export const N = SECTIONS.length;
 export const PORTFOLIO = 3;
 
+/** Duration of a full-page section slide (the input lock matches it). */
+export const SLIDE_MS = 800;
+
 /** Shared cubic-bezier easing for entrance/slide motion. */
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 

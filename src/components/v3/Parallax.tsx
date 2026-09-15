@@ -1,6 +1,7 @@
 import styles from "./v3.module.css";
 
-/** Absolutely-positioned wrapper that drifts with the cursor (via --px/--py). */
+/** Absolutely-positioned wrapper that drifts with the cursor; `depth` is the
+ *  max offset in px, applied by the parallax loop in useFullpage. */
 export function P({
   depth,
   style,
@@ -13,7 +14,8 @@ export function P({
   return (
     <div
       className={styles.parallax}
-      style={{ ...style, ["--depth" as string]: depth } as React.CSSProperties}
+      style={style}
+      data-depth={depth}
     >
       {children}
     </div>
