@@ -5,7 +5,7 @@ import { Rise } from "../Rise";
 import { Cube } from "../Cube";
 import { P } from "../Parallax";
 import { CodeBars } from "../CodeBars";
-import { Tilt } from "../Tilt";
+import { MacWindow } from "../MacWindow";
 import { ProximityText } from "../ProximityText";
 import { Terminal } from "../Terminal";
 import styles from "../v3.module.css";
@@ -70,12 +70,13 @@ export function Home({
           </Rise>
 
           <Rise show={show} from="right" delay={0.2} className={`${styles.heroArt} relative`}>
-            <Tilt className={styles.codeWin} max={8} scale={1.02}>
-              <div className={styles.codeTop}>
-                <span className={styles.codeDot} style={{ background: "#ff5f57" }} />
-                <span className={styles.codeDot} style={{ background: "#febc2e" }} />
-                <span className={styles.codeDot} style={{ background: "#28c840" }} />
-              </div>
+            <MacWindow
+              title="engineer.ts"
+              className={styles.codeWin}
+              barClassName={styles.codeTop}
+              tilt={{ max: 8, scale: 1.02 }}
+              show={show}
+            >
               <div className={styles.codeBody}>
                 <div>
                   <span className={styles.aAlt}>const</span> engineer = {"{"}
@@ -100,7 +101,7 @@ export function Home({
                 </div>
                 <div>{"};"}</div>
               </div>
-            </Tilt>
+            </MacWindow>
           </Rise>
         </div>
       </div>

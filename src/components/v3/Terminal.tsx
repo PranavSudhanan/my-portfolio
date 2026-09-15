@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { profile } from "@/lib/data";
 import { haptic } from "./haptics";
+import { MacWindow } from "./MacWindow";
 import styles from "./v3.module.css";
 
 type Line = { text: string; tone?: "accent" | "alt" | "muted" };
@@ -75,13 +76,7 @@ export function Terminal({ show, onHire }: { show: boolean; onHire: () => void }
   const toneCls = { accent: styles.aAccent, alt: styles.aAlt, muted: styles.termMuted };
 
   return (
-    <div className={styles.term}>
-      <div className={styles.termTop}>
-        <span className={styles.codeDot} style={{ background: "#ff5f57" }} />
-        <span className={styles.codeDot} style={{ background: "#febc2e" }} />
-        <span className={styles.codeDot} style={{ background: "#28c840" }} />
-        <span className={styles.termTitle}>pranav@portfolio: ~</span>
-      </div>
+    <MacWindow title="pranav@portfolio: ~" className={styles.term} barClassName={styles.termTop} show={show}>
       <div className={styles.termBody} aria-live="polite">
         <div>
           <span className={styles.aAccent}>➜</span> <span className={styles.aAlt}>~</span>{" "}
@@ -127,6 +122,6 @@ export function Terminal({ show, onHire }: { show: boolean; onHire: () => void }
           </button>
         ))}
       </div>
-    </div>
+    </MacWindow>
   );
 }

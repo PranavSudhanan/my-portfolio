@@ -65,8 +65,11 @@ export function useTheme() {
     }
 
     const root = document.documentElement;
-    if (typeof document.startViewTransition === "function") {
-      document.startViewTransition(() => flushSync(apply));
+    if (typeof document.startViewTransition === "function" && !document.hidden) {
+      const vt = document.startViewTransition(() => flushSync(apply));
+      // the browser may skip a transition (e.g. tab hidden) — the theme still applies
+      vt.ready.catch(() => {});
+      vt.finished.catch(() => {});
       return;
     }
 

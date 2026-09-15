@@ -2,7 +2,7 @@
 
 import { FiArrowRight } from "react-icons/fi";
 import type { MockKind } from "./constants";
-import { Tilt } from "./Tilt";
+import { MacWindow } from "./MacWindow";
 import styles from "./v3.module.css";
 
 function DashboardMock({ label }: { label: string }) {
@@ -156,48 +156,61 @@ function AppCardMock({ variant }: { variant: "loyalty" | "travel" }) {
   );
 }
 
-/** A tilting browser/device frame that renders a project's mock UI. When the
- *  project has a live URL the whole frame becomes a link ("Visit" cursor). */
-export function DeviceCard({ kind, label, href }: { kind: MockKind; label: string; href?: string }) {
-  const card = (
-    <Tilt
+/** A tilting browser/device frame that renders a project's mock UI, with
+ *  working traffic lights (close / fold / focus mode). When the project has a
+ *  live URL the screen area is the link ("Visit" cursor) — the title bar stays
+ *  free for the window controls. */
+export function DeviceCard({
+  kind,
+  label,
+  href,
+  show = true,
+}: {
+  kind: MockKind;
+  label: string;
+  href?: string;
+  /** this card's slide is the one on screen */
+  show?: boolean;
+}) {
+  const mock =
+    kind === "chat" ? (
+      <ChatMock />
+    ) : kind === "table" ? (
+      <TableMock />
+    ) : kind === "loyalty" ? (
+      <AppCardMock variant="loyalty" />
+    ) : kind === "travel" ? (
+      <AppCardMock variant="travel" />
+    ) : (
+      <DashboardMock label={label} />
+    );
+
+  return (
+    <MacWindow
+      title={label}
       className={styles.device}
-      max={9}
-      scale={1.025}
-      cursor={href ? "view" : "tilt"}
-      cursorLabel={href ? "Visit" : undefined}
+      barClassName={styles.deviceBar}
+      tilt={{ max: 9, scale: 1.025 }}
+      show={show}
     >
-      <div className={styles.deviceBar}>
-        <span className={styles.deviceDot} />
-        <span className={styles.deviceDot} />
-        <span className={styles.deviceDot} />
-      </div>
-      <div className={styles.deviceScreen}>
-        {kind === "chat" ? (
-          <ChatMock />
-        ) : kind === "table" ? (
-          <TableMock />
-        ) : kind === "loyalty" ? (
-          <AppCardMock variant="loyalty" />
-        ) : kind === "travel" ? (
-          <AppCardMock variant="travel" />
+      <div className={styles.deviceBody}>
+        {href ? (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${styles.deviceScreen} ${styles.deviceLink}`}
+            aria-label={`Open ${label}`}
+            draggable={false}
+            data-cursor="view"
+            data-cursor-label="Visit"
+          >
+            {mock}
+          </a>
         ) : (
-          <DashboardMock label={label} />
+          <div className={styles.deviceScreen}>{mock}</div>
         )}
       </div>
-    </Tilt>
-  );
-  if (!href) return card;
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={styles.deviceLink}
-      aria-label={`Open ${label}`}
-      draggable={false}
-    >
-      {card}
-    </a>
+    </MacWindow>
   );
 }

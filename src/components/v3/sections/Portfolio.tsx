@@ -135,6 +135,7 @@ export function Portfolio({
                       kind={projectMock[p.title] ?? "dashboard"}
                       label={p.title.split("—")[0].trim()}
                       href={p.link}
+                      show={show && i === slide}
                     />
                   </div>
                 ))}
