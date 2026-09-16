@@ -52,7 +52,7 @@ export function Contact({ show }: { show: boolean }) {
 
   return (
     <section className={styles.section}>
-      <P depth={30} style={{ right: "12%", bottom: "16%" }}>
+      <P mobile="hide" depth={30} rot={12} style={{ right: "12%", bottom: "16%" }}>
         <div className={styles.floatA}>
           <Cube size={38} dark />
         </div>

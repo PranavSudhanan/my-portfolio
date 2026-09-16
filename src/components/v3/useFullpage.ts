@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { projects } from "@/lib/data";
 import { N, PORTFOLIO, SLIDE_MS } from "./constants";
+import { gyro } from "./gyro";
 import { haptic } from "./haptics";
 import styles from "./v3.module.css";
 
@@ -78,10 +79,12 @@ export function useFullpage() {
     [lock]
   );
 
-  // when the section changes, start it scrolled to the top
+  // when the section changes, start it scrolled to the top and treat the way
+  // the phone is being held right now as the new neutral tilt
   useEffect(() => {
     const sc = scrollerFor(active);
     if (sc) sc.scrollTop = 0;
+    gyro.recenter();
   }, [active, scrollerFor]);
 
   useEffect(() => {
@@ -169,7 +172,8 @@ export function useFullpage() {
   }, [navigate, goTo, scrollerFor]);
 
   // parallax: every [data-depth] element leans by up to `depth` px — toward the
-  // pointer on desktop, and with the phone's tilt (gyroscope) on touch devices.
+  // pointer on desktop, and with the phone's tilt on touch devices (see gyro.ts).
+  // An element can also carry data-rot to bank in 3D by that many degrees.
   // Transforms are written straight onto those elements from one eased rAF loop
   // that sleeps once settled. (Setting CSS variables on the root instead forced
   // a style recalc of the entire page on every mouse move.)
@@ -182,24 +186,31 @@ export function useFullpage() {
     const layers = Array.from(root.querySelectorAll<HTMLElement>("[data-depth]")).map((el) => ({
       el,
       depth: Number(el.dataset.depth) || 0,
+      rot: Number(el.dataset.rot) || 0,
     }));
+    // a phone's tilt has a shorter throw than a pointer sweep, so give it more travel
+    const gain = fine ? 1 : 1.55;
+    const ease = fine ? 0.08 : 0.14;
     let tx = 0;
     let ty = 0;
     let x = 0;
     let y = 0;
     let raf = 0;
     const frame = () => {
-      x += (tx - x) * 0.08;
-      y += (ty - y) * 0.08;
-      for (const { el, depth } of layers) {
-        el.style.transform = `translate3d(${(x * depth).toFixed(2)}px, ${(y * depth).toFixed(2)}px, 0)`;
+      x += (tx - x) * ease;
+      y += (ty - y) * ease;
+      for (const { el, depth, rot } of layers) {
+        const dx = (x * depth * gain).toFixed(2);
+        const dy = (y * depth * gain).toFixed(2);
+        el.style.transform = rot
+          ? `perspective(700px) translate3d(${dx}px, ${dy}px, 0) rotateX(${(-y * rot).toFixed(2)}deg) rotateY(${(x * rot).toFixed(2)}deg)`
+          : `translate3d(${dx}px, ${dy}px, 0)`;
       }
       raf = Math.abs(tx - x) < 0.002 && Math.abs(ty - y) < 0.002 ? 0 : requestAnimationFrame(frame);
     };
     const kick = () => {
       if (!raf) raf = requestAnimationFrame(frame);
     };
-    const clamp1 = (v: number) => Math.max(-1, Math.min(1, v));
 
     if (fine) {
       const onMove = (e: PointerEvent) => {
@@ -215,46 +226,14 @@ export function useFullpage() {
       };
     }
 
-    // touch: tilt the phone to shift the scene. The first reading is the
-    // "neutral" hold angle, which slowly re-centres so it never drifts off.
-    let baseBeta: number | null = null;
-    let baseGamma = 0;
-    const onOrient = (e: DeviceOrientationEvent) => {
-      if (e.beta == null || e.gamma == null) return;
-      if (baseBeta == null) {
-        baseBeta = e.beta;
-        baseGamma = e.gamma;
-      }
-      baseBeta += (e.beta - baseBeta) * 0.01;
-      baseGamma += (e.gamma - baseGamma) * 0.01;
-      const nx = clamp1((e.gamma - baseGamma) / 22);
-      const ny = clamp1((e.beta - baseBeta) / 22);
-      if (Math.abs(nx - tx) < 0.004 && Math.abs(ny - ty) < 0.004) return;
-      tx = nx;
-      ty = ny;
+    const unsubscribe = gyro.subscribe((gx, gy) => {
+      tx = gx;
+      ty = gy;
       kick();
-    };
-    const listen = () => window.addEventListener("deviceorientation", onOrient, { passive: true });
-
-    // iOS only grants motion access from inside a user gesture
-    type IOSOrientation = typeof DeviceOrientationEvent & {
-      requestPermission?: () => Promise<"granted" | "denied">;
-    };
-    const DOE = (typeof DeviceOrientationEvent !== "undefined" ? DeviceOrientationEvent : null) as
-      | IOSOrientation
-      | null;
-    const askOnTap = () => {
-      DOE?.requestPermission?.()
-        .then((r) => r === "granted" && listen())
-        .catch(() => {});
-    };
-    if (DOE?.requestPermission) window.addEventListener("touchend", askOnTap, { once: true });
-    else if (DOE) listen();
-
+    });
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("deviceorientation", onOrient);
-      window.removeEventListener("touchend", askOnTap);
+      unsubscribe();
     };
   }, []);
 

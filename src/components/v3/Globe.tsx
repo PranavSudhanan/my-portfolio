@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { gyro } from "./gyro";
 import styles from "./v3.module.css";
 
 const COUNT = 900;
@@ -58,6 +59,8 @@ export function Globe({ active = true }: { active?: boolean }) {
 
     const rot = { x: 0.35, y: 0 };
     const vel = { x: 0, y: AUTO };
+    let tiltX = 0;
+    let tiltY = 0;
     let dragging = false;
     let hover = false;
     let last = { x: 0, y: 0 };
@@ -66,10 +69,11 @@ export function Globe({ active = true }: { active?: boolean }) {
       if (!dragging) {
         rot.y += vel.y;
         rot.x += vel.x;
-        const target = hover ? 0.006 : AUTO;
+        // tilting the phone spins the globe and nudges its pole
+        const target = (hover ? 0.006 : AUTO) + tiltX * 0.012;
         vel.y += (target - vel.y) * 0.03;
         vel.x *= 0.9;
-        rot.x += (0.35 - rot.x) * 0.012;
+        rot.x += (0.35 + tiltY * 0.45 - rot.x) * 0.012;
       }
       const light = themeEl?.getAttribute("data-theme") === "light";
       const W = canvas.width;
@@ -146,6 +150,16 @@ export function Globe({ active = true }: { active?: boolean }) {
     };
     wakeRef.current = wake;
 
+    // tilting the phone spins the globe (subscribed after `wake` exists — the
+    // first reading is delivered synchronously)
+    const untilt = reduce
+      ? () => {}
+      : gyro.subscribe((gx, gy) => {
+          tiltX = gx;
+          tiltY = gy;
+          wake();
+        });
+
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
@@ -183,6 +197,7 @@ export function Globe({ active = true }: { active?: boolean }) {
 
     return () => {
       cancelAnimationFrame(raf);
+      untilt();
       wakeRef.current = () => {};
       ro.disconnect();
       canvas.removeEventListener("pointerdown", onDown);

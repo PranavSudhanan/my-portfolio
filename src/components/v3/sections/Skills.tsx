@@ -22,7 +22,7 @@ export function Skills({ show }: { show: boolean }) {
   return (
     <section className={styles.section}>
       <CodeBars where="bl" />
-      <P depth={45} style={{ left: "7%", top: "20%" }}>
+      <P mobile="hide" depth={45} rot={16} style={{ left: "7%", top: "20%" }}>
         <div className={styles.floatA}>
           <Cube size={40} />
         </div>

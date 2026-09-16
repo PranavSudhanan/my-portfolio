@@ -1608,8 +1608,144 @@
 }
 @media (hover: none) { .winHint { display: none; } }
 
+/* ============================================================
+   Tilt-reactive ambient scene (<GyroScene />, mobile only)
+   ============================================================ */
+.mobileOnly { display: none; }
+@media (max-width: 900px) {
+  .root .mobileOnly { display: block; }
+  .root .desktopOnly { display: none; }
+}
+
+.gyroScene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: clip;
+  pointer-events: none;
+  display: none;
+  /* ambient, never competing with the copy in front of it */
+  opacity: 0.75;
+}
+@media (max-width: 900px) {
+  .root .gyroScene { display: block; }
+}
+.gyroObj {
+  position: absolute;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+/* horizon grid receding to a vanishing point */
+.gyroHorizon {
+  position: absolute;
+  inset: 0;
+  transform: perspective(240px) rotateX(74deg);
+  transform-origin: 50% 100%;
+  background-image:
+    linear-gradient(rgba(var(--accent-rgb), 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.5) 1px, transparent 1px);
+  background-size: 46px 46px;
+  opacity: 0.18;
+  -webkit-mask-image: linear-gradient(transparent, #000 45%, transparent 92%);
+  mask-image: linear-gradient(transparent, #000 45%, transparent 92%);
+}
+
+/* dashed orbit + travelling satellite */
+.gyroRing,
+.gyroRingInner {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(var(--accent-rgb), 0.26);
+}
+.gyroRing {
+  inset: 0;
+  animation: gyroSpin 30s linear infinite;
+}
+.gyroRingInner {
+  inset: 22%;
+  border-style: solid;
+  border-color: rgba(var(--accent2-rgb), 0.2);
+  animation: gyroSpin 20s linear infinite reverse;
+}
+.gyroSat {
+  position: absolute;
+  top: 50%;
+  left: -5px;
+  width: 9px;
+  height: 9px;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px 2px rgba(var(--accent-rgb), 0.7);
+}
+@keyframes gyroSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* wireframe hex */
+.gyroHex {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: rgba(var(--accent-rgb), 0.26);
+  stroke-width: 1;
+  animation: v3float 12s ease-in-out infinite;
+}
+.gyroHexInner { stroke: rgba(var(--accent2-rgb), 0.22); stroke-dasharray: 5 7; }
+
+/* targeting reticle */
+.gyroReticle {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--accent2-rgb), 0.32);
+  animation: gyroPing 4s ease-in-out infinite;
+}
+.gyroReticle span {
+  position: absolute;
+  background: rgba(var(--accent2-rgb), 0.5);
+}
+.gyroReticle span:first-child { left: 50%; top: -7px; bottom: -7px; width: 1px; translate: -50% 0; }
+.gyroReticle span:last-child { top: 50%; left: -7px; right: -7px; height: 1px; translate: 0 -50%; }
+@keyframes gyroPing {
+  0%, 100% { opacity: 0.35; scale: 0.9; }
+  50% { opacity: 1; scale: 1.06; }
+}
+
+/* floating code glyphs */
+.gyroGlyph {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  color: rgba(var(--accent-rgb), 0.32);
+  animation: v3float 9s ease-in-out infinite;
+}
+.gyroGlyphDim { color: rgba(var(--accent2-rgb), 0.28); font-size: 0.85rem; }
+
+/* iOS motion-permission chip */
+.motionBtn {
+  display: none;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--accent-rgb), 0.45);
+  background: rgba(var(--accent-rgb), 0.1);
+  color: var(--accent);
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.68rem;
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.2s ease;
+}
+.motionBtn:active { transform: scale(0.94); }
+@media (max-width: 900px) {
+  .root .motionBtn { display: inline-flex; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .floatA, .floatB, .cube, .term::before, .winPulse { animation: none; }
+  .gyroScene { display: none !important; }
   .globe::before, .globeRing, .globeGlow { animation: none; }
   .auroraA::before, .auroraB::before, .caret { animation: none; }
   .ch { transition: none; }

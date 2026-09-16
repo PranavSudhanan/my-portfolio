@@ -12,7 +12,7 @@ import styles from "../v3.module.css";
 export function About({ show }: { show: boolean }) {
   return (
     <section className={styles.section}>
-      <P depth={40} style={{ right: "8%", top: "16%" }}>
+      <P mobile="hide" depth={40} rot={14} style={{ right: "8%", top: "16%" }}>
         <div className={styles.floatB}>
           <Cube size={54} dark />
         </div>

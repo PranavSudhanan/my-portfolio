@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { gyro } from "./gyro";
 import styles from "./v3.module.css";
 
 type Speck = {
@@ -109,6 +110,16 @@ export function Dust() {
       window.addEventListener("touchend", onTouchEnd, { passive: true });
     }
 
+    // the specks drift the way the phone leans, like motes in a tilted jar
+    let tiltX = 0;
+    let tiltY = 0;
+    const untilt = fine
+      ? () => {}
+      : gyro.subscribe((gx, gy) => {
+          tiltX = gx;
+          tiltY = gy;
+        });
+
     let raf = 0;
     let last = performance.now();
     let t = 0;
@@ -121,8 +132,8 @@ export function Dust() {
       ctx.clearRect(0, 0, W, H);
 
       for (const s of specks) {
-        s.x += (s.vx + Math.sin(t * 0.012 + s.phase) * 0.07) * dt;
-        s.y += s.vy * dt;
+        s.x += (s.vx + Math.sin(t * 0.012 + s.phase) * 0.07 + tiltX * 0.5) * dt;
+        s.y += (s.vy + tiltY * 0.4) * dt;
 
         const dx = s.x + s.ox - px;
         const dy = s.y + s.oy - py;
@@ -168,6 +179,7 @@ export function Dust() {
 
     return () => {
       cancelAnimationFrame(raf);
+      untilt();
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("mouseout", onOut);

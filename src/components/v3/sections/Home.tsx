@@ -22,7 +22,7 @@ export function Home({
   return (
     <section className={styles.section}>
       <CodeBars where="bl" />
-      <P depth={55} style={{ left: "40%", bottom: "12%" }}>
+      <P depth={55} rot={12} mobile="hide" style={{ left: "40%", bottom: "12%" }}>
         <div className={styles.floatA}>
           <Cube size={64} />
         </div>
@@ -32,7 +32,7 @@ export function Home({
       </P>
       {/* dark cube floating above the code window's top-right corner — kept at
          section level so it's never clipped by the .inner scroll container */}
-      <P depth={26} style={{ right: "9.5%", top: "25%" }}>
+      <P depth={26} rot={14} style={{ right: "9.5%", top: "25%" }}>
         <div className={styles.floatA}>
           <Cube size={44} dark />
         </div>

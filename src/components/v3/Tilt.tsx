@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   motion,
   useMotionTemplate,
@@ -8,6 +8,7 @@ import {
   useReducedMotion,
   useSpring,
 } from "framer-motion";
+import { gyro } from "./gyro";
 import styles from "./v3.module.css";
 
 const SPRING = { stiffness: 210, damping: 22, mass: 0.6 };
@@ -16,7 +17,8 @@ const SPRING = { stiffness: 210, damping: 22, mass: 0.6 };
  * 3D card: tilts toward the pointer on springs, lifts slightly on hover and
  * carries a pointer-tracked sheen plus a glowing edge that follows the cursor
  * around its border. On touch screens pressing the card tilts it toward the
- * finger (and it follows while dragging), springing flat on release.
+ * finger (and it follows while dragging), springing flat on release; when
+ * nothing is pressed it banks with the phone's own tilt.
  * `cursor` / `cursorLabel` feed the custom cursor.
  */
 export function Tilt({
@@ -66,6 +68,19 @@ export function Tilt({
     mx.set((px + 0.5) * 100);
     my.set((py + 0.5) * 100);
   };
+  // phones: lean the card with the device itself while it isn't being pressed
+  useEffect(() => {
+    if (reduce) return;
+    if (!window.matchMedia("(pointer: coarse)").matches) return;
+    return gyro.subscribe((gx, gy) => {
+      if (pressed.current) return;
+      rx.set(-gy * max * 0.85);
+      ry.set(gx * max * 0.85);
+      mx.set((gx * 0.5 + 0.5) * 100);
+      my.set((gy * 0.5 + 0.5) * 100);
+    });
+  }, [reduce, max, rx, ry, mx, my]);
+
   const onEnter = (e: React.PointerEvent) => {
     if (!reduce && e.pointerType !== "touch") sc.set(scale);
   };

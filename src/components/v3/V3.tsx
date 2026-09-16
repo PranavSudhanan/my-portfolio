@@ -10,6 +10,8 @@ import { Cursor } from "./Cursor";
 import { TouchFX } from "./TouchFX";
 import { Dock } from "./Dock";
 import { Dust } from "./Dust";
+import { GyroScene } from "./GyroScene";
+import { MotionButton } from "./MotionButton";
 import { Home } from "./sections/Home";
 import { About } from "./sections/About";
 import { Skills } from "./sections/Skills";
@@ -35,6 +37,7 @@ export default function V3() {
       <div className={styles.gridReveal} aria-hidden>
         <div className={styles.gridRevealDots} />
       </div>
+      <GyroScene />
       <Dust />
 
       <div className={styles.topbar}>
@@ -45,6 +48,7 @@ export default function V3() {
           </button>
         </Magnetic>
         <div className={styles.topRight}>
+          <MotionButton />
           <ThemeSwitch mode={mode} setMode={setMode} />
           <Magnetic className={styles.contactWrap}>
             <button className={styles.contactBtn} onClick={() => goTo(4)}>

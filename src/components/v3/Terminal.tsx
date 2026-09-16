@@ -76,7 +76,13 @@ export function Terminal({ show, onHire }: { show: boolean; onHire: () => void }
   const toneCls = { accent: styles.aAccent, alt: styles.aAlt, muted: styles.termMuted };
 
   return (
-    <MacWindow title="pranav@portfolio: ~" className={styles.term} barClassName={styles.termTop} show={show}>
+    <MacWindow
+      title="pranav@portfolio: ~"
+      className={styles.term}
+      barClassName={styles.termTop}
+      tilt={{ max: 6, scale: 1 }}
+      show={show}
+    >
       <div className={styles.termBody} aria-live="polite">
         <div>
           <span className={styles.aAccent}>➜</span> <span className={styles.aAlt}>~</span>{" "}
