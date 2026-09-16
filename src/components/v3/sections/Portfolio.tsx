@@ -54,7 +54,7 @@ export function Portfolio({
 
       <div className={styles.inner}>
         <Rise show={show} from="left" delay={0.05}>
-          <div className="mb-8 flex items-end justify-between gap-4">
+          <div className={`${styles.pfHead} mb-8 flex items-end justify-between gap-4`}>
             <div>
               <p className={styles.kicker}>Selected work</p>
               <h2 className={`${styles.h2} mt-3`}>

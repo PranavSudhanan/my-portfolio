@@ -18,7 +18,7 @@ export function About({ show }: { show: boolean }) {
         </div>
       </P>
       <div className={styles.inner}>
-        <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_0.9fr_1.1fr]">
+        <div className={`${styles.aboutGrid} grid items-center gap-10 lg:grid-cols-[0.9fr_0.9fr_1.1fr]`}>
           <Rise show={show} from="left" delay={0.05}>
             <p className={styles.kicker}>About me</p>
             <h2 className={`${styles.h2} mt-4`}>

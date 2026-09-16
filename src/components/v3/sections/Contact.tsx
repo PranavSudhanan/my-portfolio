@@ -58,7 +58,7 @@ export function Contact({ show }: { show: boolean }) {
         </div>
       </P>
       <div className={styles.inner}>
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div className={`${styles.contactGrid} grid items-center gap-12 lg:grid-cols-2`}>
           <Rise show={show} from="left" delay={0.1} className="order-last lg:order-first">
             <Globe active={show} />
           </Rise>

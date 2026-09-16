@@ -39,7 +39,7 @@ export function Home({
       </P>
 
       <div className={styles.inner}>
-        <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
+        <div className={`${styles.heroGrid} grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12`}>
           <div>
             <Rise show={show} from="left" delay={0.05}>
               <h1 className={styles.h1}>
