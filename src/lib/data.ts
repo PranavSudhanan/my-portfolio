@@ -22,6 +22,8 @@ export const profile = {
   profileImage: "/pranav-profile.jpg", // ← add your profile image to /public
   summary:
     "Full Stack Software Developer with 4+ years of experience designing, building, and delivering scalable web applications and enterprise BI platforms with Python, Django, FastAPI, React and Next.js. I own features end-to-end — backend, frontend and cloud — and turn complex business data into dashboards, automated reports and conversational tools people actually use.",
+  summaryShort:
+    "Full Stack Software Developer with 4+ years building scalable web apps and enterprise BI platforms — backend, frontend and cloud, end to end.",
   tagline:
     "I build scalable web apps, enterprise BI platforms and AI assistants — end to end.",
 };

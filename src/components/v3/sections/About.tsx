@@ -38,7 +38,8 @@ export function About({ show }: { show: boolean }) {
           </Rise>
 
           <Rise show={show} from="right" delay={0.25}>
-            <p className={styles.lead}>{profile.summary}</p>
+            <p className={`${styles.lead} ${styles.longCopy}`}>{profile.summary}</p>
+            <p className={`${styles.lead} ${styles.shortCopy}`}>{profile.summaryShort}</p>
             <p className={`${styles.lead} mt-4`}>
               Currently at Leapsurge Business Innovations, I build enterprise BI
               platforms — most recently <span className={styles.aAccent}>Aspire BI</span>{" "}

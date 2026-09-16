@@ -186,6 +186,22 @@
   display: none;
 }
 
+/* used for one synchronous frame while measuring section heights */
+.measuring *,
+.measuring *::before,
+.measuring *::after {
+  transform: none !important;
+  transition: none !important;
+}
+
+/* short/long copy swap: long prose on roomy screens, a tighter line on small
+   ones, so a section fits one screen instead of needing several scrolls */
+.shortCopy { display: none; }
+@media (max-width: 640px), (max-height: 560px) {
+  .root .longCopy { display: none; }
+  .root .shortCopy { display: block; }
+}
+
 /* ---------- Typography ---------- */
 .kicker {
   font-size: 0.72rem;

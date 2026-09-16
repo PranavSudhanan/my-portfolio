@@ -36,10 +36,17 @@ export function Skills({ show }: { show: boolean }) {
             <h2 className={`${styles.h2} mt-4`}>Skills &amp; Experience</h2>
           </Rise>
           <Rise show={show} from="up" delay={0.19}>
-            <p className={`${styles.lead} mx-auto mt-5 max-w-2xl`}>
+            <p className={`${styles.lead} ${styles.longCopy} mx-auto mt-5 max-w-2xl`}>
               I specialise in end-to-end web and data platforms — Python, Django
               and FastAPI on the backend; React and Next.js on the front; SQL,
               Databricks and Azure behind the scenes. For a deeper look, visit my{" "}
+              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className={styles.aAlt}>
+                LinkedIn
+              </a>
+              .
+            </p>
+            <p className={`${styles.lead} ${styles.shortCopy} mx-auto mt-4 max-w-2xl`}>
+              End-to-end web and data platforms. More on{" "}
               <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className={styles.aAlt}>
                 LinkedIn
               </a>

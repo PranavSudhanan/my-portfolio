@@ -90,12 +90,16 @@ export function useFullpage() {
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    // A few px of slack: decorative bits that sit just outside their box (the
+    // accent frame around the portrait, for one) add a sliver of scrollable
+    // area that would otherwise cost an extra scroll to get past.
+    const EDGE = 24;
     const extremes = () => {
       const sc = scrollerFor(activeRef.current);
       if (!sc) return { top: true, bottom: true };
       return {
-        top: sc.scrollTop <= 1,
-        bottom: sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1,
+        top: sc.scrollTop <= EDGE,
+        bottom: sc.scrollTop + sc.clientHeight >= sc.scrollHeight - EDGE,
       };
     };
 
@@ -236,6 +240,70 @@ export function useFullpage() {
       unsubscribe();
     };
   }, []);
+
+  // Keep every section to exactly one screen.
+  //
+  // The engine only advances once a section is scrolled to its edge, so a
+  // section taller than the viewport costs several scrolls to get past. Where
+  // the content does not fit, shrink it with CSS zoom — which re-lays the text
+  // out (so lines still fill the width) rather than scaling a picture of it —
+  // down to MIN_ZOOM. Anything still too tall below that keeps its own scroll.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const MIN_ZOOM = 0.8;
+    const canZoom = typeof CSS !== "undefined" && CSS.supports?.("zoom", "0.9");
+    if (!canZoom) return;
+
+    const fitOne = (inner: HTMLElement) => {
+      const sec = inner.parentElement;
+      if (!sec) return;
+      inner.style.zoom = "";
+      inner.style.maxHeight = "";
+      const pad = getComputedStyle(sec);
+      const avail =
+        sec.clientHeight - parseFloat(pad.paddingTop) - parseFloat(pad.paddingBottom);
+      if (avail <= 0) return;
+
+      let k = 1;
+      for (let i = 0; i < 4; i++) {
+        const content = inner.scrollHeight * k; // zoomed units → real pixels
+        if (content <= avail + 1) break;
+        k = Math.max(MIN_ZOOM, k * (avail / content));
+        inner.style.zoom = String(k);
+        // a percentage max-height does not follow zoom, so pin the box to the
+        // space actually available, expressed in the zoomed unit
+        inner.style.maxHeight = `${avail / k}px`;
+        if (k <= MIN_ZOOM) break;
+      }
+      if (k >= 0.999) {
+        inner.style.zoom = "";
+        inner.style.maxHeight = "";
+      }
+    };
+    const fitAll = () => {
+      // Entrance animations park hidden elements a few px off-position, and a
+      // transformed child still counts toward its container's scrollable area —
+      // which reads as phantom overflow. Flatten transforms while measuring;
+      // it is synchronous, so nothing is painted in this state.
+      el.classList.add(styles.measuring);
+      el.querySelectorAll<HTMLElement>("." + styles.inner).forEach(fitOne);
+      el.classList.remove(styles.measuring);
+    };
+
+    // measure after layout has settled (fonts, images, entrance animations)
+    const raf = requestAnimationFrame(fitAll);
+    const onResize = () => fitAll();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    document.fonts?.ready.then(fitAll).catch(() => {});
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+    // re-fit when the visible content changes (section, project slide)
+  }, [active, slide]);
 
   return { active, slide, setSlide, goTo, navigate, rootRef, containerRef };
 }
